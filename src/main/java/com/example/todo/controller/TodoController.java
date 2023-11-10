@@ -1,4 +1,4 @@
-package com.example.todo.Controller;
+package com.example.todo.controller;
 
 import jakarta.websocket.server.PathParam;
 import org.springframework.http.ResponseEntity;

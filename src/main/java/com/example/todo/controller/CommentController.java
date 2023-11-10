@@ -1,4 +1,4 @@
-package com.example.todo.Controller;
+package com.example.todo.controller;
 
 
 import org.springframework.http.ResponseEntity;
