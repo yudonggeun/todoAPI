@@ -1,7 +1,11 @@
 package com.example.todo.repository;
 
-import com.example.todo.domain.User;
+import com.example.todo.domain.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends JpaRepository<User, Long> {
+import java.util.Optional;
+
+public interface UserRepository extends JpaRepository<Customer, Long> {
+
+    Optional<Customer> findByUsernameAndPassword(String username, String password);
 }

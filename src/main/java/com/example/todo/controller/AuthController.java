@@ -1,8 +1,11 @@
 package com.example.todo.controller;
 
+import com.example.todo.common.util.JwtUtil;
+import com.example.todo.dto.LoginRequest;
 import com.example.todo.dto.MessageResponse;
 import com.example.todo.dto.SignUpRequest;
 import com.example.todo.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +20,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final UserService userService;
+    private final JwtUtil jwtUtil;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login() {
-        return ResponseEntity.ok("dfsa");
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request, HttpServletResponse response) {
+        var customer = userService.getCustomerInfo(request);
+        String token = jwtUtil.createToken(customer.username(), customer.userRole());
+        response.setHeader("Authorization", token);
+        return ResponseEntity.ok(new MessageResponse("success", "로그인 성공"));
     }
 
     @PostMapping("/signup")
