@@ -29,19 +29,21 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         String token = request.getHeader(AUTHORIZATION_HEADER);
-        Optional<CustomerInfo> bearerToken = jwtUtil.getBearerToken(token, ACCESS_TYPE);
+        Optional<CustomerInfo> bearerToken = jwtUtil.getCustomerInfoFrom(token, ACCESS_TYPE);
 
+        // 유효한 엑세스 토큰인 경우
         if (bearerToken.isPresent()) {
-            CustomerInfo customerInfo = bearerToken.get();
+            var customer = bearerToken.get();
 
-            String username = customerInfo.name();
-            UserRole role = customerInfo.userRole();
+            String username = customer.name();
+            UserRole role = customer.role();
 
             UserDetails user = User.withUsername(username)
                     .roles(role.name())
                     .password("")
                     .build();
 
+            // 인가 처리
             var authentication = new JwtToken(user, List.of(new SimpleGrantedAuthority(role.name())));
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }

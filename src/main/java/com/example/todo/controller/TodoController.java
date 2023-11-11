@@ -19,14 +19,12 @@ public class TodoController {
 
     @PostMapping
     public ResponseEntity<?> createTodo(@Valid @RequestBody CreateTodoRequest request) {
-        var todoInfo = todoService.createTodo(request);
-        return ResponseEntity.ok(todoInfo);
+        return ResponseEntity.ok(todoService.createTodo(request));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getTodo(@PathVariable("id") Long id) {
-        var todoInfo = todoService.getTodoInfo(id);
-        return ResponseEntity.ok(todoInfo);
+        return ResponseEntity.ok(todoService.getTodoInfo(id));
     }
 
     @GetMapping

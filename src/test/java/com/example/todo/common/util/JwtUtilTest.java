@@ -29,7 +29,7 @@ class JwtUtilTest {
         // given
         String token = util.createToken("user1", UserRole.USER, ACCESS_TYPE);
         // when
-        Optional<CustomerInfo> bearerToken = util.getBearerToken(token, REFRESH_TYPE);
+        Optional<CustomerInfo> bearerToken = util.getCustomerInfoFrom(token, REFRESH_TYPE);
         // then
         assertThat(bearerToken).isEmpty();
     }
@@ -40,7 +40,7 @@ class JwtUtilTest {
         // given
         String token = util.createToken("user1", UserRole.USER, REFRESH_TYPE);
         // when
-        Optional<CustomerInfo> bearerToken = util.getBearerToken(token, ACCESS_TYPE);
+        Optional<CustomerInfo> bearerToken = util.getCustomerInfoFrom(token, ACCESS_TYPE);
         // then
         assertThat(bearerToken).isEmpty();
     }
@@ -51,10 +51,10 @@ class JwtUtilTest {
         // given
         String token = util.createToken("user1", UserRole.USER, REFRESH_TYPE);
         // when
-        Optional<CustomerInfo> bearerToken = util.getBearerToken(token, REFRESH_TYPE);
+        Optional<CustomerInfo> bearerToken = util.getCustomerInfoFrom(token, REFRESH_TYPE);
         // then
         assertThat(bearerToken).isPresent()
-                .get().extracting("name", "userRole")
+                .get().extracting("name", "role")
                 .containsExactly("user1", UserRole.USER);
     }
 
@@ -64,10 +64,10 @@ class JwtUtilTest {
         // given
         String token = util.createToken("user1", UserRole.USER, ACCESS_TYPE);
         // when
-        Optional<CustomerInfo> bearerToken = util.getBearerToken(token, ACCESS_TYPE);
+        Optional<CustomerInfo> bearerToken = util.getCustomerInfoFrom(token, ACCESS_TYPE);
         // then
         assertThat(bearerToken).isPresent()
-                .get().extracting("name", "userRole")
+                .get().extracting("name", "role")
                 .containsExactly("user1", UserRole.USER);
     }
 }

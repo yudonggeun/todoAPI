@@ -26,14 +26,14 @@ public class TodoService {
     private final TodoRepository todoRepository;
 
     public TodoInfo createTodo(CreateTodoRequest req) {
-        Todo todo = todoRepository.save(req.toEntity(getLoginCustomerName()));
-        return TodoInfo.of(todo);
+        Todo entity = todoRepository.save(req.toEntity(getLoginCustomerName()));
+        return TodoInfo.of(entity);
     }
 
     public TodoInfo getTodoInfo(Long id) {
-        Todo todo = todoRepository.findById(id)
+        Todo entity = todoRepository.findById(id)
                 .orElseThrow(NotExistException::new);
-        return TodoInfo.of(todo);
+        return TodoInfo.of(entity);
     }
 
     public Map<String, List<TodoInfo>> getTodoInfoList() {
@@ -47,27 +47,29 @@ public class TodoService {
         Todo todo = todoRepository.findById(request.id())
                 .orElseThrow(() -> new NotExistException("존재하지 않은 할일 목록입니다."));
 
-        if(!todo.getAuthor().equals(getLoginCustomerName())){
-            throw new AccessDeniedException("작성자만 삭제/수정할 수 있습니다.");
-        }
-
+        checkLoginCustomerEqualAuthorOfTodo(todo);
         todo.update(request);
         return TodoInfo.of(todo);
-    }
-
-    private String getLoginCustomerName() {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication.getName();
     }
 
     public void complete(Long id) {
         Todo todo = todoRepository.findById(id)
                 .orElseThrow(() -> new NotExistException("존재하지 않은 할일 목록입니다."));
 
-        if(!todo.getAuthor().equals(getLoginCustomerName())){
+        checkLoginCustomerEqualAuthorOfTodo(todo);
+        todo.complete();
+    }
+
+    private void checkLoginCustomerEqualAuthorOfTodo(Todo todo) {
+        if (!todo.getAuthor().equals(getLoginCustomerName())) {
             throw new AccessDeniedException("작성자만 삭제/수정할 수 있습니다.");
         }
+    }
 
-        todo.complete();
+    private String getLoginCustomerName() {
+        return SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
     }
 }

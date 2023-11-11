@@ -32,13 +32,10 @@ public class CommentService {
     }
 
     public CommentInfo updateComment(UpdateCommentRequest request) {
-        Comment comment = commentRepository.findById(request.id())
+        var comment = commentRepository.findById(request.id())
                 .orElseThrow(() -> new NotExistException("댓글이 존재하지 않습니다."));
 
-        if (!comment.getAuthor().equals(getLoginCustomerName())) {
-            throw new AccessDeniedException("작성자만 삭제/수정할 수 있습니다.");
-        }
-
+        checkLoginCustomerEqualAuthorOfComment(comment);
         comment.update(request);
         return CommentInfo.of(comment);
     }
@@ -47,14 +44,20 @@ public class CommentService {
         var comment = commentRepository.findById(id)
                 .orElseThrow(NotExistException::new);
 
-        if(!comment.getAuthor().equals(getLoginCustomerName())){
-            throw new AccessDeniedException("작성자만 삭제/수정할 수 있습니다.");
-        }
+        checkLoginCustomerEqualAuthorOfComment(comment);
         commentRepository.delete(comment);
     }
 
+    private void checkLoginCustomerEqualAuthorOfComment(Comment comment) {
+        if (!comment.getAuthor().equals(getLoginCustomerName())) {
+            throw new AccessDeniedException("작성자만 삭제/수정할 수 있습니다.");
+        }
+    }
+
     private String getLoginCustomerName() {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication.getName();
+        return SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
     }
 }

@@ -68,8 +68,7 @@ public class JwtUtil {
                         .compact();
     }
 
-    // JWT 토큰 substring
-    private String substringToken(String tokenValue) {
+    private String removePrefix(String tokenValue) {
         if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
             return tokenValue.substring(7);
         }
@@ -77,38 +76,36 @@ public class JwtUtil {
         throw new NullPointerException("Not Found Token");
     }
 
-    // 토큰 검증
     private boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
-        } catch (SecurityException | MalformedJwtException | SignatureException e) {
-            log.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
-        } catch (ExpiredJwtException e) {
-            log.error("Expired JWT token, 만료된 JWT token 입니다.");
-        } catch (UnsupportedJwtException e) {
-            log.error("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
-        } catch (IllegalArgumentException e) {
-            log.error("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
+        } catch (RuntimeException e){
+            return false;
         }
-        return false;
     }
 
-    // 토큰에서 사용자 정보 가져오기
-    public Claims getUserInfoFromToken(String token) {
+    public Claims getCustomerClaim(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key).build()
                 .parseClaimsJws(token)
                 .getBody();
     }
 
-    // 토큭 추출하기
-    public Optional<CustomerInfo> getBearerToken(String token, String type) {
+    /**
+     * 토큰에 담긴 고객의 정보를 매핑하는 함수입니다.
+     * 토큰이 유효하지 않거나 로직에서 원하는 타입이 아닌 경우에는 empty를 반환합니다.
+     * @param token Bearer jwtToken...
+     * @param type refresh, access 토큰 타입
+     * @return 고객이 정보가 담긴 Optinal 객체
+     */
+    public Optional<CustomerInfo> getCustomerInfoFrom(String token, String type) {
         if (token == null || !token.startsWith("Bearer")) return Optional.empty();
-        token = substringToken(token);
+
+        token = removePrefix(token);
         if (!validateToken(token)) return Optional.empty();
 
-        Claims jwt = getUserInfoFromToken(token);
+        Claims jwt = getCustomerClaim(token);
 
         String username = jwt.getSubject();
         UserRole role = UserRole.valueOf(jwt.get(AUTHORIZATION_KEY, String.class));

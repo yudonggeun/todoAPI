@@ -29,8 +29,8 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request, HttpServletResponse response) {
         var customer = userService.getCustomerInfo(request);
-        String accessToken = jwtUtil.createToken(customer.name(), customer.userRole(), ACCESS_TYPE);
-        String refreshToken = jwtUtil.createToken(customer.name(), customer.userRole(), REFRESH_TYPE);
+        String accessToken = jwtUtil.createToken(customer.name(), customer.role(), ACCESS_TYPE);
+        String refreshToken = jwtUtil.createToken(customer.name(), customer.role(), REFRESH_TYPE);
 
         response.setHeader(AUTHORIZATION_HEADER, accessToken);
         return ResponseEntity.ok(new AuthorizationResponse(
@@ -56,11 +56,11 @@ public class AuthController {
 
         String token = request.getHeader(AUTHORIZATION_HEADER);
 
-        CustomerInfo customerInfo = jwtUtil.getBearerToken(token, REFRESH_TYPE)
+        CustomerInfo customerInfo = jwtUtil.getCustomerInfoFrom(token, REFRESH_TYPE)
                 .orElseThrow(() -> new AccessDeniedException("토큰이 유효하지 않습니다."));
 
         String name = customerInfo.name();
-        UserRole role = customerInfo.userRole();
+        UserRole role = customerInfo.role();
 
         String accessToken = jwtUtil.createToken(name, role, ACCESS_TYPE);
         String refreshToken = request.getHeader(AUTHORIZATION_HEADER);
