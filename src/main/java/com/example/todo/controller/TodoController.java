@@ -1,5 +1,6 @@
 package com.example.todo.controller;
 
+import com.example.todo.dto.TodoSearchParam;
 import com.example.todo.dto.request.CreateTodoRequest;
 import com.example.todo.dto.TodoInfo;
 import com.example.todo.dto.request.UpdateTodoRequest;
@@ -28,8 +29,8 @@ public class TodoController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getTodoList() {
-        return ResponseEntity.ok(todoService.getTodoInfoList());
+    public ResponseEntity<?> getTodoList(TodoSearchParam condition) {
+        return ResponseEntity.ok(todoService.getTodoInfoList(condition));
     }
 
     @PatchMapping

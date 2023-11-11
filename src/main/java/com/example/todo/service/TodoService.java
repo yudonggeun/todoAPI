@@ -2,6 +2,7 @@ package com.example.todo.service;
 
 import com.example.todo.common.exception.NotExistException;
 import com.example.todo.domain.Todo;
+import com.example.todo.dto.TodoSearchParam;
 import com.example.todo.dto.request.CreateTodoRequest;
 import com.example.todo.dto.TodoInfo;
 import com.example.todo.dto.request.UpdateTodoRequest;
@@ -37,9 +38,9 @@ public class TodoService {
         return TodoInfo.of(entity);
     }
 
-    public Map<String, List<TodoInfo>> getTodoInfoList() {
+    public Map<String, List<TodoInfo>> getTodoInfoList(TodoSearchParam condition) {
         String loginCustomerName = getLoginCustomerName();
-        return todoRepository.findAllByIsComplete(false).stream()
+        return todoRepository.findAllByIsCompleteAndCondition(false, condition).stream()
                 .map(todo -> todo.hidePrivateColumn(loginCustomerName))
                 .sorted(comparing(TodoInfo::createdAt).reversed())
                 .collect(groupingBy(TodoInfo::author));
