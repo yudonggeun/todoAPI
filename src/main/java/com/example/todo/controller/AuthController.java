@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -47,7 +48,7 @@ public class AuthController {
             userService.signUp(request);
         } catch (RuntimeException ex) {
             return ResponseEntity.badRequest()
-                    .body(new MessageResponse("error", "중복된 유저 이름을 사용할 수 없습니다."));
+                    .body(new MessageResponse("error", "중복된 username 입니다."));
         }
         return ResponseEntity.ok().build();
     }
@@ -56,14 +57,9 @@ public class AuthController {
     public ResponseEntity<?> refresh(HttpServletRequest request) {
 
         String token = request.getHeader(AUTHORIZATION_HEADER);
-        Optional<CustomerInfo> bearerToken = jwtUtil.getBearerToken(token, REFRESH_TYPE);
 
-        if (bearerToken.isEmpty()) {
-            return ResponseEntity.badRequest()
-                    .body(new MessageResponse("not valid", "유효하지 않은 토큰입니다."));
-        }
-
-        CustomerInfo customerInfo = bearerToken.get();
+        CustomerInfo customerInfo = jwtUtil.getBearerToken(token, REFRESH_TYPE)
+                .orElseThrow(() -> new AccessDeniedException("토큰이 유효하지 않습니다."));
 
         String name = customerInfo.name();
         UserRole role = customerInfo.userRole();

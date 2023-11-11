@@ -31,7 +31,7 @@ public class UserService {
 
     public CustomerInfo getCustomerInfo(LoginRequest req) {
         Customer customer = customerRepository.findByUsernameAndPassword(req.username(), req.password())
-                .orElseThrow(() -> new AccessDeniedException("유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new AccessDeniedException("회원을 찾을 수 없습니다."));
         return CustomerInfo.of(customer);
     }
 }

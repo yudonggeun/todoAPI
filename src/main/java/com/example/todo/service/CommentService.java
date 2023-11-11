@@ -36,7 +36,7 @@ public class CommentService {
                 .orElseThrow(() -> new NotExistException("댓글이 존재하지 않습니다."));
 
         if (!comment.getAuthor().equals(getLoginCustomerName())) {
-            throw new AccessDeniedException("수정 권한이 없습니다.");
+            throw new AccessDeniedException("작성자만 삭제/수정할 수 있습니다.");
         }
 
         comment.update(request);
@@ -48,7 +48,7 @@ public class CommentService {
                 .orElseThrow(NotExistException::new);
 
         if(!comment.getAuthor().equals(getLoginCustomerName())){
-            throw new AccessDeniedException("삭제 권한이 없습니다.");
+            throw new AccessDeniedException("작성자만 삭제/수정할 수 있습니다.");
         }
     }
 

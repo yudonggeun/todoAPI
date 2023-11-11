@@ -1,5 +1,6 @@
 package com.example.todo.controller;
 
+import com.example.todo.common.exception.NotExistException;
 import com.example.todo.dto.response.MessageResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -25,8 +26,8 @@ public class ExceptionController {
         return new MessageResponse("bad request", "http 형식을 수정해주세요");
     }
 
-    @ExceptionHandler({AccessDeniedException.class})
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler({NotExistException.class, AccessDeniedException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public MessageResponse unauthorized(Exception e){
         return new MessageResponse("unauthorized", e.getMessage());
     }

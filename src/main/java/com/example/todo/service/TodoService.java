@@ -48,7 +48,7 @@ public class TodoService {
                 .orElseThrow(() -> new NotExistException("존재하지 않은 할일 목록입니다."));
 
         if(!todo.getAuthor().equals(getLoginCustomerName())){
-            throw new AccessDeniedException("수정 권한이 없습니다.");
+            throw new AccessDeniedException("작성자만 삭제/수정할 수 있습니다.");
         }
 
         todo.update(request);
@@ -65,7 +65,7 @@ public class TodoService {
                 .orElseThrow(() -> new NotExistException("존재하지 않은 할일 목록입니다."));
 
         if(!todo.getAuthor().equals(getLoginCustomerName())){
-            throw new AccessDeniedException("수정 권한이 없습니다.");
+            throw new AccessDeniedException("작성자만 삭제/수정할 수 있습니다.");
         }
 
         todo.complete();
