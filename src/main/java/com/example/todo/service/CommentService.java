@@ -1,14 +1,18 @@
 package com.example.todo.service;
 
+import com.example.todo.common.exception.NotExistException;
 import com.example.todo.domain.Comment;
 import com.example.todo.domain.Todo;
 import com.example.todo.dto.CommentInfo;
 import com.example.todo.dto.CreateCommentRequest;
+import com.example.todo.dto.UpdateCommentRequest;
 import com.example.todo.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.access.AccessDeniedException;
+
 
 @Service
 @Transactional
@@ -23,6 +27,18 @@ public class CommentService {
                 .todo(Todo.foreignKey(request.todoId()))
                 .build());
 
+        return CommentInfo.of(comment);
+    }
+
+    public CommentInfo updateComment(UpdateCommentRequest request) {
+        Comment comment = commentRepository.findById(request.id())
+                .orElseThrow(() -> new NotExistException("댓글이 존재하지 않습니다."));
+
+        if(!comment.getAuthor().equals(getLoginCustomerName())){
+            throw new AccessDeniedException("수정 권한이 없습니다.");
+        }
+
+        comment.update(request);
         return CommentInfo.of(comment);
     }
 

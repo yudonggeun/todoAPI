@@ -1,5 +1,6 @@
 package com.example.todo.domain;
 
+import com.example.todo.dto.UpdateCommentRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
@@ -25,5 +26,9 @@ public class Comment extends BaseTimeEntity{
         this.todo = todo;
         this.author = author;
         this.content = content;
+    }
+
+    public void update(UpdateCommentRequest request) {
+        if(request.content() != null) this.content = request.content();
     }
 }
