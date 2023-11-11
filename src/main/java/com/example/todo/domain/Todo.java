@@ -20,7 +20,7 @@ public class Todo extends BaseTimeEntity {
     @Column
     private String content;
     @Column
-    private Boolean isComplete;
+    private Boolean isComplete = false;
 
     private Todo(Long id){
         super(id);
@@ -39,5 +39,9 @@ public class Todo extends BaseTimeEntity {
     public void update(UpdateTodoRequest request) {
         if(request.title() != null) title = request.title();
         if(request.content() != null) content = request.content();
+    }
+
+    public void complete() {
+        isComplete = true;
     }
 }

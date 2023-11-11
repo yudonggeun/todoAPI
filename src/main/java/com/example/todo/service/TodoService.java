@@ -59,4 +59,15 @@ public class TodoService {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getName();
     }
+
+    public void complete(Long id) {
+        Todo todo = todoRepository.findById(id)
+                .orElseThrow(() -> new NotExistException("존재하지 않은 할일 목록입니다."));
+
+        if(!todo.getAuthor().equals(getLoginCustomerName())){
+            throw new AccessDeniedException("수정 권한이 없습니다.");
+        }
+
+        todo.complete();
+    }
 }
