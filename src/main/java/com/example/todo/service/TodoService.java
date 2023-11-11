@@ -25,13 +25,8 @@ public class TodoService {
     private final TodoRepository todoRepository;
 
     public TodoInfo createTodo(CreateTodoRequest req) {
-        Todo todo = todoRepository.save(req.toEntity(getUsernameAtToken()));
+        Todo todo = todoRepository.save(req.toEntity(getLoginCustomerName()));
         return TodoInfo.of(todo);
-    }
-
-    private String getUsernameAtToken() {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication.getName();
     }
 
     public TodoInfo getTodoInfo(Long id) {
@@ -48,10 +43,15 @@ public class TodoService {
     }
 
     public TodoInfo updateTodo(UpdateTodoRequest request) {
-        Todo todo = todoRepository.findById(request.id())
+        Todo todo = todoRepository.findByIdAndAuthor(request.id(), getLoginCustomerName())
                 .orElseThrow(() -> new NotExistException("존재하지 않은 할일 목록입니다."));
 
         todo.update(request);
         return TodoInfo.of(todo);
+    }
+
+    private String getLoginCustomerName() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
     }
 }
