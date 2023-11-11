@@ -8,10 +8,10 @@ import com.example.todo.dto.request.CreateCommentRequest;
 import com.example.todo.dto.request.UpdateCommentRequest;
 import com.example.todo.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.security.access.AccessDeniedException;
 
 
 @Service
@@ -50,6 +50,7 @@ public class CommentService {
         if(!comment.getAuthor().equals(getLoginCustomerName())){
             throw new AccessDeniedException("작성자만 삭제/수정할 수 있습니다.");
         }
+        commentRepository.delete(comment);
     }
 
     private String getLoginCustomerName() {

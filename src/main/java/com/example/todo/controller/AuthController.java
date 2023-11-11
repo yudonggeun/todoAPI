@@ -2,7 +2,7 @@ package com.example.todo.controller;
 
 import com.example.todo.common.util.JwtUtil;
 import com.example.todo.common.util.UserRole;
-import com.example.todo.dto.*;
+import com.example.todo.dto.CustomerInfo;
 import com.example.todo.dto.request.LoginRequest;
 import com.example.todo.dto.request.SignUpRequest;
 import com.example.todo.dto.response.AuthorizationResponse;
@@ -15,8 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 import static com.example.todo.common.util.JwtUtil.*;
 
