@@ -31,4 +31,10 @@ public class ExceptionController {
     public MessageResponse unauthorized(Exception e){
         return new MessageResponse("unauthorized", e.getMessage());
     }
+
+    @ExceptionHandler(NotExistException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public MessageResponse notExist(Exception e){
+        return new MessageResponse("bad request", "요청한 리소스를 찾을 수 없습니다.");
+    }
 }
