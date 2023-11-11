@@ -1,5 +1,6 @@
 package com.example.todo.domain;
 
+import com.example.todo.dto.UpdateTodoRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.AccessLevel;
@@ -27,5 +28,10 @@ public class Todo extends BaseTimeEntity {
         this.title = title;
         this.content = content;
         this.isComplete = isComplete;
+    }
+
+    public void update(UpdateTodoRequest request) {
+        if(request.title() != null) title = request.title();
+        if(request.content() != null) content = request.content();
     }
 }

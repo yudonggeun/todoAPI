@@ -1,8 +1,10 @@
 package com.example.todo.service;
 
+import com.example.todo.common.exception.NotExistException;
 import com.example.todo.domain.Todo;
 import com.example.todo.dto.CreateTodoRequest;
 import com.example.todo.dto.TodoInfo;
+import com.example.todo.dto.UpdateTodoRequest;
 import com.example.todo.repository.TodoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,5 +45,13 @@ public class TodoService {
                 .map(TodoInfo::of)
                 .sorted(comparing(TodoInfo::createdAt).reversed())
                 .collect(groupingBy(TodoInfo::author));
+    }
+
+    public TodoInfo updateTodo(UpdateTodoRequest request) {
+        Todo todo = todoRepository.findById(request.id())
+                .orElseThrow(() -> new NotExistException("존재하지 않은 할일 목록입니다."));
+
+        todo.update(request);
+        return TodoInfo.of(todo);
     }
 }

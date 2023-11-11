@@ -1,6 +1,8 @@
 package com.example.todo.controller;
 
 import com.example.todo.dto.CreateTodoRequest;
+import com.example.todo.dto.TodoInfo;
+import com.example.todo.dto.UpdateTodoRequest;
 import com.example.todo.service.TodoService;
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class TodoController {
 
-    private TodoService todoService;
+    private final TodoService todoService;
 
     @PostMapping
     public ResponseEntity<?> createTodo(CreateTodoRequest request) {
@@ -32,7 +34,8 @@ public class TodoController {
     }
 
     @PatchMapping
-    public ResponseEntity<?> updateTodo() {
-        return null;
+    public ResponseEntity<?> updateTodo(UpdateTodoRequest request) {
+        TodoInfo info = todoService.updateTodo(request);
+        return ResponseEntity.ok(info);
     }
 }

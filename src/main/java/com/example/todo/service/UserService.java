@@ -8,7 +8,7 @@ import com.example.todo.dto.LoginRequest;
 import com.example.todo.dto.SignUpRequest;
 import com.example.todo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +31,7 @@ public class UserService {
 
     public CustomerInfo getCustomerInfo(LoginRequest req) {
         Customer customer = customerRepository.findByUsernameAndPassword(req.username(), req.password())
-                .orElseThrow(() -> new UsernameNotFoundException("유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new AccessDeniedException("유저를 찾을 수 없습니다."));
         return CustomerInfo.of(customer);
     }
 }

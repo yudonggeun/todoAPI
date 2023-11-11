@@ -3,7 +3,7 @@ package com.example.todo.controller;
 import com.example.todo.dto.MessageResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -25,7 +25,7 @@ public class ExceptionController {
         return new MessageResponse("bad request", "http 형식을 수정해주세요");
     }
 
-    @ExceptionHandler({UsernameNotFoundException.class})
+    @ExceptionHandler({AccessDeniedException.class})
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public MessageResponse unauthorized(Exception e){
         return new MessageResponse("unauthorized", e.getMessage());
