@@ -2,10 +2,11 @@ package com.example.todo.controller;
 
 
 import com.example.todo.dto.CommentInfo;
-import com.example.todo.dto.CreateCommentRequest;
-import com.example.todo.dto.MessageResponse;
-import com.example.todo.dto.UpdateCommentRequest;
+import com.example.todo.dto.request.CreateCommentRequest;
+import com.example.todo.dto.response.MessageResponse;
+import com.example.todo.dto.request.UpdateCommentRequest;
 import com.example.todo.service.CommentService;
+import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,13 +20,13 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping
-    public ResponseEntity<?> createComment(CreateCommentRequest request) {
+    public ResponseEntity<?> createComment(@Valid @RequestBody CreateCommentRequest request) {
         CommentInfo info = commentService.createComment(request);
         return ResponseEntity.ok(info);
     }
 
     @PatchMapping
-    public ResponseEntity<?> updateComment(UpdateCommentRequest request) {
+    public ResponseEntity<?> updateComment(@Valid @RequestBody UpdateCommentRequest request) {
         CommentInfo info = commentService.updateComment(request);
         return ResponseEntity.ok(info);
     }

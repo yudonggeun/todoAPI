@@ -1,6 +1,6 @@
 package com.example.todo.controller;
 
-import com.example.todo.dto.MessageResponse;
+import com.example.todo.dto.response.MessageResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;

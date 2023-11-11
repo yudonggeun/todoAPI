@@ -2,9 +2,9 @@ package com.example.todo.service;
 
 import com.example.todo.common.exception.NotExistException;
 import com.example.todo.domain.Todo;
-import com.example.todo.dto.CreateTodoRequest;
+import com.example.todo.dto.request.CreateTodoRequest;
 import com.example.todo.dto.TodoInfo;
-import com.example.todo.dto.UpdateTodoRequest;
+import com.example.todo.dto.request.UpdateTodoRequest;
 import com.example.todo.repository.TodoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;

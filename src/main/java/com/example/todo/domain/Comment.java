@@ -1,7 +1,8 @@
 package com.example.todo.domain;
 
-import com.example.todo.dto.UpdateCommentRequest;
+import com.example.todo.dto.request.UpdateCommentRequest;
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
@@ -11,8 +12,8 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Entity
 public class Comment extends BaseTimeEntity{
-
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Todo todo;

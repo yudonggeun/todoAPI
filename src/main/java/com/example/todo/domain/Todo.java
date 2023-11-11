@@ -1,6 +1,6 @@
 package com.example.todo.domain;
 
-import com.example.todo.dto.UpdateTodoRequest;
+import com.example.todo.dto.request.UpdateTodoRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.AccessLevel;
