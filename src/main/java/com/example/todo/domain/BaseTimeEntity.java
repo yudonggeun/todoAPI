@@ -22,4 +22,7 @@ public class BaseTimeEntity {
     @Column
     private LocalDateTime createdAt;
 
+    public BaseTimeEntity(Long id) {
+        this.id = id;
+    }
 }

@@ -22,6 +22,12 @@ public class Todo extends BaseTimeEntity {
     @Column
     private Boolean isComplete;
 
+    private Todo(Long id){
+        super(id);
+    }
+    public static Todo foreignKey(Long id){
+        return new Todo(id);
+    }
     @Builder
     private Todo(String author, String title, String content, Boolean isComplete) {
         this.author = author;
