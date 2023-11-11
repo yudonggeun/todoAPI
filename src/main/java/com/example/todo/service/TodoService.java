@@ -7,6 +7,7 @@ import com.example.todo.dto.TodoInfo;
 import com.example.todo.dto.request.UpdateTodoRequest;
 import com.example.todo.repository.TodoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,8 +44,12 @@ public class TodoService {
     }
 
     public TodoInfo updateTodo(UpdateTodoRequest request) {
-        Todo todo = todoRepository.findByIdAndAuthor(request.id(), getLoginCustomerName())
+        Todo todo = todoRepository.findById(request.id())
                 .orElseThrow(() -> new NotExistException("존재하지 않은 할일 목록입니다."));
+
+        if(!todo.getAuthor().equals(getLoginCustomerName())){
+            throw new AccessDeniedException("수정 권한이 없습니다.");
+        }
 
         todo.update(request);
         return TodoInfo.of(todo);
