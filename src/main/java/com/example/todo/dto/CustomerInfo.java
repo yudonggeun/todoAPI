@@ -6,13 +6,11 @@ import com.example.todo.domain.Customer;
 
 public record CustomerInfo(
         String username,
-        String password,
         UserRole userRole
 ) {
     public static CustomerInfo of(Customer customer) {
         return new CustomerInfo(
                 customer.getUsername(),
-                customer.getPassword(),
                 getRole(customer)
         );
     }

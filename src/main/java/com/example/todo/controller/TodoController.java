@@ -1,5 +1,6 @@
 package com.example.todo.controller;
 
+import com.example.todo.dto.CreateTodoRequest;
 import jakarta.websocket.server.PathParam;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 public class TodoController {
 
     @PostMapping
-    public ResponseEntity<?> createTodo() {
+    public ResponseEntity<?> createTodo(CreateTodoRequest request) {
         return null;
     }
 

@@ -1,18 +1,19 @@
 package com.example.todo.controller;
 
 import com.example.todo.common.util.JwtUtil;
-import com.example.todo.dto.LoginRequest;
-import com.example.todo.dto.MessageResponse;
-import com.example.todo.dto.SignUpRequest;
+import com.example.todo.common.util.UserRole;
+import com.example.todo.dto.*;
 import com.example.todo.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
+
+import static com.example.todo.common.util.JwtUtil.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -25,9 +26,9 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request, HttpServletResponse response) {
         var customer = userService.getCustomerInfo(request);
-        String token = jwtUtil.createToken(customer.username(), customer.userRole());
-        response.setHeader("Authorization", token);
-        return ResponseEntity.ok(new MessageResponse("success", "로그인 성공"));
+        String accessToken = jwtUtil.createToken(customer.username(), customer.userRole(), ACCESS_TYPE);
+        String refreshToken = jwtUtil.createToken(customer.username(), customer.userRole(), REFRESH_TYPE);
+        return ResponseEntity.ok(new AuthorizationResponse(accessToken, refreshToken));
     }
 
     @PostMapping("/signup")
@@ -39,5 +40,27 @@ public class AuthController {
                     .body(new MessageResponse("error", "중복된 유저 이름을 사용할 수 없습니다."));
         }
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/refresh")
+    public ResponseEntity<?> refresh(HttpServletRequest request) {
+
+        String token = request.getHeader(AUTHORIZATION_HEADER);
+        Optional<CustomerInfo> bearerToken = jwtUtil.getBearerToken(token, REFRESH_TYPE);
+
+        if (bearerToken.isEmpty()) {
+            return ResponseEntity.badRequest()
+                    .body(new MessageResponse("not valid", "유효하지 않은 토큰입니다."));
+        }
+
+        CustomerInfo customerInfo = bearerToken.get();
+
+        String username = customerInfo.username();
+        UserRole role = customerInfo.userRole();
+
+        String accessToken = jwtUtil.createToken(username, role, ACCESS_TYPE);
+        String refreshToken = request.getHeader(AUTHORIZATION_HEADER);
+
+        return ResponseEntity.ok(new AuthorizationResponse(accessToken, refreshToken));
     }
 }

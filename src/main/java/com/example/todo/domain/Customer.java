@@ -22,7 +22,7 @@ public class Customer {
     @Column
     private String password;
     @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<Authority> authority = new ArrayList<>();
+    private final List<Authority> authority = new ArrayList<>();
 
 
     @Builder
