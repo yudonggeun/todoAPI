@@ -6,7 +6,6 @@ import com.example.todo.dto.request.UpdateTodoRequest;
 import com.example.todo.dto.response.MessageResponse;
 import com.example.todo.service.TodoService;
 import jakarta.validation.Valid;
-import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +24,7 @@ public class TodoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getTodo(@PathParam("id") Long id) {
+    public ResponseEntity<?> getTodo(@PathVariable("id") Long id) {
         var todoInfo = todoService.getTodoInfo(id);
         return ResponseEntity.ok(todoInfo);
     }
@@ -42,7 +41,7 @@ public class TodoController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> completeTodo(@PathParam("id") Long id){
+    public ResponseEntity<?> completeTodo(@PathVariable("id") Long id){
         todoService.complete(id);
         return ResponseEntity.ok(new MessageResponse("success", "할일 완료"));
     }

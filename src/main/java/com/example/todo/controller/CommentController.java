@@ -3,11 +3,10 @@ package com.example.todo.controller;
 
 import com.example.todo.dto.CommentInfo;
 import com.example.todo.dto.request.CreateCommentRequest;
-import com.example.todo.dto.response.MessageResponse;
 import com.example.todo.dto.request.UpdateCommentRequest;
+import com.example.todo.dto.response.MessageResponse;
 import com.example.todo.service.CommentService;
 import jakarta.validation.Valid;
-import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +31,7 @@ public class CommentController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteComment(@PathParam("id") Long id) {
+    public ResponseEntity<?> deleteComment(@PathVariable("id") Long id) {
         commentService.deleteComment(id);
         return ResponseEntity.ok(new MessageResponse("success", "삭제 성공하였습니다."));
     }
