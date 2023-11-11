@@ -16,18 +16,19 @@ public class TodoController {
 
     @PostMapping
     public ResponseEntity<?> createTodo(CreateTodoRequest request) {
-        var todoInfo = todoService.create(request);
+        var todoInfo = todoService.createTodo(request);
         return ResponseEntity.ok(todoInfo);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getTodo(@PathParam("id") Long id) {
-        return null;
+        var todoInfo = todoService.getTodoInfo(id);
+        return ResponseEntity.ok(todoInfo);
     }
 
     @GetMapping
     public ResponseEntity<?> getTodoList() {
-        return null;
+        return ResponseEntity.ok(todoService.getTodoInfoList());
     }
 
     @PatchMapping
