@@ -11,7 +11,6 @@ public record CreateTodoRequest(
     public Todo toEntity(String author) {
         return Todo.builder()
                 .author(author)
-                .isComplete(false)
                 .content(content)
                 .title(title)
                 .build();

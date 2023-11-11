@@ -37,8 +37,7 @@ public class TodoService {
     }
 
     public Map<String, List<TodoInfo>> getTodoInfoList() {
-        return todoRepository.findAll().stream()
-                .map(TodoInfo::of)
+        return todoRepository.findAllByIsComplete(false).stream()
                 .sorted(comparing(TodoInfo::createdAt).reversed())
                 .collect(groupingBy(TodoInfo::author));
     }

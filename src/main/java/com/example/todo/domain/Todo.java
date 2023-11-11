@@ -29,11 +29,10 @@ public class Todo extends BaseTimeEntity {
         return new Todo(id);
     }
     @Builder
-    private Todo(String author, String title, String content, Boolean isComplete) {
+    private Todo(String author, String title, String content) {
         this.author = author;
         this.title = title;
         this.content = content;
-        this.isComplete = isComplete;
     }
 
     public void update(UpdateTodoRequest request) {
