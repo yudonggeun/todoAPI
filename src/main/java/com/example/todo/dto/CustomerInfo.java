@@ -5,7 +5,7 @@ import com.example.todo.domain.Authority;
 import com.example.todo.domain.Customer;
 
 public record CustomerInfo(
-        String username,
+        String name,
         UserRole userRole
 ) {
     public static CustomerInfo of(Customer customer) {

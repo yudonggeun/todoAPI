@@ -54,7 +54,7 @@ class JwtUtilTest {
         Optional<CustomerInfo> bearerToken = util.getBearerToken(token, REFRESH_TYPE);
         // then
         assertThat(bearerToken).isPresent()
-                .get().extracting("username", "userRole")
+                .get().extracting("name", "userRole")
                 .containsExactly("user1", UserRole.USER);
     }
 
@@ -67,7 +67,7 @@ class JwtUtilTest {
         Optional<CustomerInfo> bearerToken = util.getBearerToken(token, ACCESS_TYPE);
         // then
         assertThat(bearerToken).isPresent()
-                .get().extracting("username", "userRole")
+                .get().extracting("name", "userRole")
                 .containsExactly("user1", UserRole.USER);
     }
 }

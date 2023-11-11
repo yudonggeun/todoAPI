@@ -34,7 +34,7 @@ public class JwtFilter extends OncePerRequestFilter {
         if (bearerToken.isPresent()) {
             CustomerInfo customerInfo = bearerToken.get();
 
-            String username = customerInfo.username();
+            String username = customerInfo.name();
             UserRole role = customerInfo.userRole();
 
             UserDetails user = User.withUsername(username)

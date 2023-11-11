@@ -30,9 +30,15 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request, HttpServletResponse response) {
         var customer = userService.getCustomerInfo(request);
-        String accessToken = jwtUtil.createToken(customer.username(), customer.userRole(), ACCESS_TYPE);
-        String refreshToken = jwtUtil.createToken(customer.username(), customer.userRole(), REFRESH_TYPE);
-        return ResponseEntity.ok(new AuthorizationResponse(accessToken, refreshToken));
+        String accessToken = jwtUtil.createToken(customer.name(), customer.userRole(), ACCESS_TYPE);
+        String refreshToken = jwtUtil.createToken(customer.name(), customer.userRole(), REFRESH_TYPE);
+
+        response.setHeader(AUTHORIZATION_HEADER, accessToken);
+        return ResponseEntity.ok(new AuthorizationResponse(
+                customer.name(),
+                accessToken,
+                refreshToken)
+        );
     }
 
     @PostMapping("/signup")
@@ -59,12 +65,16 @@ public class AuthController {
 
         CustomerInfo customerInfo = bearerToken.get();
 
-        String username = customerInfo.username();
+        String name = customerInfo.name();
         UserRole role = customerInfo.userRole();
 
-        String accessToken = jwtUtil.createToken(username, role, ACCESS_TYPE);
+        String accessToken = jwtUtil.createToken(name, role, ACCESS_TYPE);
         String refreshToken = request.getHeader(AUTHORIZATION_HEADER);
 
-        return ResponseEntity.ok(new AuthorizationResponse(accessToken, refreshToken));
+        return ResponseEntity.ok(new AuthorizationResponse(
+                name,
+                accessToken,
+                refreshToken)
+        );
     }
 }
