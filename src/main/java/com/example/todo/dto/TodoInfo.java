@@ -21,4 +21,11 @@ public record TodoInfo(
                 todo.getCreatedAt()
         );
     }
+
+    public TodoInfo hidePrivateColumn(String accessCustomer) {
+        if(!this.author.equals(accessCustomer)){
+            return new TodoInfo(id, author, title, null, createdAt);
+        }
+        return this;
+    }
 }

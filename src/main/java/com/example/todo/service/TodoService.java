@@ -33,11 +33,14 @@ public class TodoService {
     public TodoInfo getTodoInfo(Long id) {
         Todo entity = todoRepository.findById(id)
                 .orElseThrow(NotExistException::new);
+        checkLoginCustomerEqualAuthorOfTodo(entity);
         return TodoInfo.of(entity);
     }
 
     public Map<String, List<TodoInfo>> getTodoInfoList() {
+        String loginCustomerName = getLoginCustomerName();
         return todoRepository.findAllByIsComplete(false).stream()
+                .map(todo -> todo.hidePrivateColumn(loginCustomerName))
                 .sorted(comparing(TodoInfo::createdAt).reversed())
                 .collect(groupingBy(TodoInfo::author));
     }
