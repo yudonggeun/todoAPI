@@ -2,9 +2,12 @@ package com.example.todo.dto;
 
 import com.example.todo.common.util.UserRole;
 import com.example.todo.domain.Customer;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public record CustomerInfo(
+        @Schema(description = "유저 이름", example = "youdong98")
         String name,
+        @Schema(description = "유저 권한", example = "사용자 권한 정보")
         UserRole role
 ) {
     public static CustomerInfo of(Customer customer) {
