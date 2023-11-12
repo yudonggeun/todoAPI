@@ -10,6 +10,8 @@ import com.example.todo.dto.response.MessageResponse;
 import com.example.todo.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -35,8 +37,11 @@ public class AuthController {
 
     @Operation(summary = "로그인", description = "Jwt 토큰 기반 로그인 처리를 수행합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "로그인 성공", headers = @Header(name = AUTHORIZATION_HEADER, description = "Bearer jwt 토큰을 정보입니다.")),
-            @ApiResponse(responseCode = "400", description = "유효하지 않은 요청")
+            @ApiResponse(responseCode = "200", description = "로그인 성공",
+                    headers = @Header(name = AUTHORIZATION_HEADER, description = "Bearer jwt 토큰을 정보입니다."),
+                    content = @Content(schema = @Schema(implementation = AuthorizationResponse.class))),
+            @ApiResponse(responseCode = "400", description = "유효하지 않은 요청",
+                    content = @Content(schema = @Schema(implementation = MessageResponse.class)))
     })
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request, HttpServletResponse response) {
@@ -54,8 +59,10 @@ public class AuthController {
 
     @Operation(summary = "회원가입", description = "새로운 유저를 등록합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "회원가입 성공"),
-            @ApiResponse(responseCode = "400", description = "유효하지 않은 요청")
+            @ApiResponse(responseCode = "200", description = "회원가입 성공",
+                    content = @Content(schema = @Schema(implementation = MessageResponse.class))),
+            @ApiResponse(responseCode = "400", description = "유효하지 않은 요청",
+                    content = @Content(schema = @Schema(implementation = MessageResponse.class)))
     })
     @PostMapping("/signup")
     public ResponseEntity<?> signUp(@Valid @RequestBody SignUpRequest request) {
@@ -65,13 +72,15 @@ public class AuthController {
             return ResponseEntity.badRequest()
                     .body(new MessageResponse("error", "중복된 username 입니다."));
         }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(new MessageResponse("success", "회원가입에 성공했습니다."));
     }
 
     @Operation(summary = "토큰 재발급", description = "refresh 토큰으로 access 토큰을 재발급 할 수 있습니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "토큰 재발급 성공"),
-            @ApiResponse(responseCode = "400", description = "유효하지 않은 요청")
+            @ApiResponse(responseCode = "200", description = "토큰 재발급 성공",
+                    content = @Content(schema = @Schema(implementation = AuthorizationResponse.class))),
+            @ApiResponse(responseCode = "400", description = "유효하지 않은 요청",
+                    content = @Content(schema = @Schema(implementation = MessageResponse.class)))
     })
     @GetMapping("/refresh")
     @SecurityRequirement(name = "Bearer Authentication")
