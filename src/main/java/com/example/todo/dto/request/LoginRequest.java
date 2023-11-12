@@ -8,7 +8,7 @@ public record LoginRequest(
         @Schema(description = "로그인 유저이름", example = "youdong98")
         @Username
         String username,
-        @Schema(description = "비밀번호", example = "123aA")
+        @Schema(description = "비밀번호", example = "123aAadfdff")
         @Password
         String password
 ) {

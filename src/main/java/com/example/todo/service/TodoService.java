@@ -39,7 +39,7 @@ public class TodoService {
     public TodoInfo getTodoInfo(Long id) {
         Todo entity = todoRepository.findById(id)
                 .orElseThrow(NotExistException::new);
-        checkLoginCustomerEqualAuthorOfTodo(entity);
+        checkLoginCustomerEqualAuthorOfTodo(entity, "작성자만 조회할 수 있습니다.");
         return TodoInfo.of(entity);
     }
 
@@ -53,7 +53,7 @@ public class TodoService {
 
         var entries = new ArrayList<TodoInfoEntry>(data.size());
 
-        for (var author: data.keySet()) {
+        for (var author : data.keySet()) {
             var todoInfoList = data.get(author);
             entries.add(new TodoInfoEntry(author, todoInfoList));
         }
@@ -80,7 +80,7 @@ public class TodoService {
         Todo todo = todoRepository.findById(request.id())
                 .orElseThrow(() -> new NotExistException("존재하지 않은 할일 목록입니다."));
 
-        checkLoginCustomerEqualAuthorOfTodo(todo);
+        checkLoginCustomerEqualAuthorOfTodo(todo, "작성자만 삭제/수정할 수 있습니다.");
         todo.update(request);
         return TodoInfo.of(todo);
     }
@@ -89,13 +89,13 @@ public class TodoService {
         Todo todo = todoRepository.findById(id)
                 .orElseThrow(() -> new NotExistException("존재하지 않은 할일 목록입니다."));
 
-        checkLoginCustomerEqualAuthorOfTodo(todo);
+        checkLoginCustomerEqualAuthorOfTodo(todo, "작성자만 삭제/수정할 수 있습니다.");
         todo.complete();
     }
 
-    private void checkLoginCustomerEqualAuthorOfTodo(Todo todo) {
+    private void checkLoginCustomerEqualAuthorOfTodo(Todo todo, String errorMessage) {
         if (!todo.getAuthor().equals(getLoginCustomerName())) {
-            throw new AccessDeniedException("작성자만 삭제/수정할 수 있습니다.");
+            throw new AccessDeniedException(errorMessage);
         }
     }
 

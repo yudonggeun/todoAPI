@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -73,6 +74,7 @@ public class AuthController {
             @ApiResponse(responseCode = "400", description = "유효하지 않은 요청")
     })
     @GetMapping("/refresh")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<?> refresh(HttpServletRequest request) {
 
         String token = request.getHeader(AUTHORIZATION_HEADER);
