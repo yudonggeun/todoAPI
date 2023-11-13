@@ -8,7 +8,6 @@ public record TodoInfoEntry(
         @Schema(description = "할일 작성자", example = "youdong98")
         String author,
         @Schema(description = "할일 목록")
-        List<TodoInfo> todoList
-)
-{
+        List<TodoShortInfo> todoList
+) {
 }

@@ -1,7 +1,7 @@
 package com.example.todo.repository;
 
-import com.example.todo.dto.TodoInfo;
 import com.example.todo.dto.TodoSearchParam;
+import com.example.todo.dto.TodoShortInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -13,17 +13,17 @@ public class CustomTodoRepositoryImpl implements CustomTodoRepository {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<TodoInfo> findAllByIsCompleteAndCondition(boolean isComplete, TodoSearchParam condition) {
+    public List<TodoShortInfo> findAllByIsCompleteAndCondition(boolean isComplete, TodoSearchParam condition) {
 
         String query = "select ID, AUTHOR, TITLE, CONTENT, CREATED_AT " +
-                       "from TODO " +
-                       "where IS_COMPLETE = " + isComplete;
+                "from TODO " +
+                "where IS_COMPLETE = " + isComplete;
 
         if (condition != null && condition.title() != null) {
             query += " and title like '%" + condition.title() + "%'";
         }
 
-        return jdbcTemplate.query(query, (rs, rowNum) -> new TodoInfo(
+        return jdbcTemplate.query(query, (rs, rowNum) -> new TodoShortInfo(
                 rs.getLong("ID"),
                 rs.getString("AUTHOR"),
                 rs.getString("TITLE"),
