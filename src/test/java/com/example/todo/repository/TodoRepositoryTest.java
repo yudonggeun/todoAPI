@@ -1,15 +1,13 @@
 package com.example.todo.repository;
 
 import com.example.todo.domain.Todo;
-import com.example.todo.dto.TodoInfo;
 import com.example.todo.dto.TodoSearchParam;
+import com.example.todo.dto.TodoShortInfo;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,13 +25,13 @@ class TodoRepositoryTest {
         for (int i = 0; i < 10; i++)
             saveSampleTodo("title" + i, "author", "content" + i, i % 2 == 0);
         // when
-        List<TodoInfo> result = todoRepository.findAllByIsCompleteAndCondition(false, null);
+        var result = todoRepository.findAllByIsCompleteAndCondition(false, null);
         // then
-        for (TodoInfo todoInfo : result) {
+        for (var todoInfo : result) {
             System.out.println(todoInfo.title());
         }
         assertThat(result).hasSize(5)
-                .map(TodoInfo::title)
+                .map(TodoShortInfo::title)
                 .contains("title1", "title3", "title5", "title7", "title9");
     }
 
@@ -56,10 +54,10 @@ class TodoRepositoryTest {
             saveSampleTodo("title" + i, "author", "content" + i, i % 2 == 0);
         var condition = new TodoSearchParam("title1");
         // when
-        List<TodoInfo> result = todoRepository.findAllByIsCompleteAndCondition(false, condition);
+        var result = todoRepository.findAllByIsCompleteAndCondition(false, condition);
         // then
         assertThat(result).hasSize(1)
-                .map(TodoInfo::title)
+                .map(TodoShortInfo::title)
                 .contains("title1");
     }
 }
