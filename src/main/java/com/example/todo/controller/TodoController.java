@@ -96,4 +96,20 @@ public class TodoController {
         todoService.complete(id);
         return ResponseEntity.ok(new MessageResponse("success", "할일 완료"));
     }
+
+    @Operation(summary = "할일 삭제", description = "할일을 삭제할 수 있습니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "할일 삭제 처리 성공",
+                    content = @Content(schema = @Schema(implementation = MessageResponse.class))),
+            @ApiResponse(responseCode = "400", description = "유효하지 않은 요청",
+                    content = @Content(schema = @Schema(implementation = MessageResponse.class)))
+    })
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteTodo(
+            @Parameter(description = "할일 식별자", example = "1")
+            @PathVariable("id") Long id
+    ) {
+        todoService.delete(id);
+        return ResponseEntity.ok(new MessageResponse("success", "할일 삭제 완료"));
+    }
 }

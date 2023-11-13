@@ -9,6 +9,7 @@ import com.example.todo.dto.TodoShortInfo;
 import com.example.todo.dto.request.CreateTodoRequest;
 import com.example.todo.dto.request.UpdateTodoRequest;
 import com.example.todo.dto.response.TodoInfoListResponse;
+import com.example.todo.repository.CommentRepository;
 import com.example.todo.repository.TodoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
@@ -31,6 +32,7 @@ import static java.util.stream.Collectors.groupingBy;
 public class TodoService {
 
     private final TodoRepository todoRepository;
+    private final CommentRepository commentRepository;
 
     public TodoInfo createTodo(CreateTodoRequest req) {
         Todo entity = todoRepository.save(req.toEntity(getLoginCustomerName()));
@@ -105,5 +107,14 @@ public class TodoService {
                 .getContext()
                 .getAuthentication()
                 .getName();
+    }
+
+    public void delete(Long id) {
+        Todo todo = todoRepository.findById(id)
+                .orElseThrow(NotExistException::new);
+
+        checkLoginCustomerEqualAuthorOfTodo(todo, "작성자만 삭제/수정할 수 있습니다.");
+        commentRepository.deleteByTodoId(id);
+        todoRepository.deleteById(id);
     }
 }
