@@ -2,11 +2,12 @@ package com.example.todo.service;
 
 import com.example.todo.common.exception.NotExistException;
 import com.example.todo.domain.Todo;
-import com.example.todo.dto.TodoSearchParam;
-import com.example.todo.dto.request.CreateTodoRequest;
 import com.example.todo.dto.TodoInfo;
-import com.example.todo.dto.request.UpdateTodoRequest;
 import com.example.todo.dto.TodoInfoEntry;
+import com.example.todo.dto.TodoSearchParam;
+import com.example.todo.dto.TodoShortInfo;
+import com.example.todo.dto.request.CreateTodoRequest;
+import com.example.todo.dto.request.UpdateTodoRequest;
 import com.example.todo.dto.response.TodoInfoListResponse;
 import com.example.todo.repository.TodoRepository;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +38,7 @@ public class TodoService {
     }
 
     public TodoInfo getTodoInfo(Long id) {
-        Todo entity = todoRepository.findById(id)
+        Todo entity = todoRepository.findFetchById(id)
                 .orElseThrow(NotExistException::new);
         checkLoginCustomerEqualAuthorOfTodo(entity, "작성자만 조회할 수 있습니다.");
         return TodoInfo.of(entity);
@@ -45,7 +46,7 @@ public class TodoService {
 
     public TodoInfoListResponse getTodoInfoList(TodoSearchParam condition) {
 
-        Map<String, List<TodoInfo>> data = todoRepository
+        Map<String, List<TodoShortInfo>> data = todoRepository
                 .findAllByIsCompleteAndCondition(false, condition).stream()
                 .map(this::hidePrivateColumn)
                 .sorted(byCreatedAtDesc())
@@ -61,17 +62,17 @@ public class TodoService {
         return new TodoInfoListResponse(entries.size(), entries);
     }
 
-    private Collector<TodoInfo, ?, Map<String, List<TodoInfo>>> groupByAuthor() {
-        return groupingBy(TodoInfo::author);
+    private Collector<TodoShortInfo, ?, Map<String, List<TodoShortInfo>>> groupByAuthor() {
+        return groupingBy(TodoShortInfo::author);
     }
 
-    private Comparator<TodoInfo> byCreatedAtDesc() {
-        return comparing(TodoInfo::createdAt).reversed();
+    private Comparator<TodoShortInfo> byCreatedAtDesc() {
+        return comparing(TodoShortInfo::createdAt).reversed();
     }
 
-    private TodoInfo hidePrivateColumn(TodoInfo todo) {
+    private TodoShortInfo hidePrivateColumn(TodoShortInfo todo) {
         if (!todo.author().equals(getLoginCustomerName())) {
-            return new TodoInfo(todo.id(), todo.author(), todo.title(), null, todo.createdAt());
+            return new TodoShortInfo(todo.id(), todo.author(), todo.title(), null, todo.createdAt());
         }
         return todo;
     }

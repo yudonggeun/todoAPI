@@ -3,10 +3,14 @@ package com.example.todo.domain;
 import com.example.todo.dto.request.UpdateTodoRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -21,6 +25,8 @@ public class Todo extends BaseTimeEntity {
     private String content;
     @Column
     private Boolean isComplete = false;
+    @OneToMany(mappedBy = "todo")
+    private List<Comment> comments = new ArrayList<>();
 
     private Todo(Long id){
         super(id);
