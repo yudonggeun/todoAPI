@@ -8,6 +8,7 @@
 
 ## API
 ![api](./docs/api.png)
+서버 가동 후 [여기](http://localhost:8080/swagger-ui/index.html)를 클릭하면 API 문서를 볼 수 있어요!
 
 ## Why?
 1. 처음 설계한 API 명세서에 변경사항이 있었나요?
