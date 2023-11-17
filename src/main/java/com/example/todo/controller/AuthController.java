@@ -16,7 +16,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -68,11 +67,11 @@ public class AuthController {
     public ResponseEntity<?> signUp(@Valid @RequestBody SignUpRequest request) {
         try {
             userService.signUp(request);
+            return ResponseEntity.ok(new MessageResponse("success", "회원가입에 성공했습니다."));
         } catch (RuntimeException ex) {
             return ResponseEntity.badRequest()
                     .body(new MessageResponse("error", "중복된 username 입니다."));
         }
-        return ResponseEntity.ok(new MessageResponse("success", "회원가입에 성공했습니다."));
     }
 
     @Operation(summary = "토큰 재발급", description = "refresh 토큰으로 access 토큰을 재발급 할 수 있습니다.")
@@ -84,18 +83,15 @@ public class AuthController {
     })
     @GetMapping("/refresh")
     @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<?> refresh(HttpServletRequest request) {
+    public ResponseEntity<?> refresh(@RequestHeader(AUTHORIZATION_HEADER) String refreshToken) {
 
-        String token = request.getHeader(AUTHORIZATION_HEADER);
-
-        CustomerInfo customerInfo = jwtUtil.getCustomerInfoFrom(token, REFRESH_TYPE)
+        CustomerInfo customerInfo = jwtUtil.getCustomerInfoFrom(refreshToken, REFRESH_TYPE)
                 .orElseThrow(() -> new AccessDeniedException("토큰이 유효하지 않습니다."));
 
         String name = customerInfo.name();
         UserRole role = customerInfo.role();
 
         String accessToken = jwtUtil.createToken(name, role, ACCESS_TYPE);
-        String refreshToken = request.getHeader(AUTHORIZATION_HEADER);
 
         return ResponseEntity.ok(new AuthorizationResponse(
                 name,

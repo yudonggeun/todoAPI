@@ -7,7 +7,7 @@ import com.example.todo.domain.Customer;
 import com.example.todo.dto.CustomerInfo;
 import com.example.todo.dto.request.LoginRequest;
 import com.example.todo.dto.request.SignUpRequest;
-import com.example.todo.repository.UserRepository;
+import com.example.todo.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserRepository customerRepository;
+    private final CustomerRepository customerRepository;
 
     public void signUp(SignUpRequest request) {
         customerRepository.save(Customer.builder()
