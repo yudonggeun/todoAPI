@@ -206,6 +206,120 @@ class TodoControllerTest extends ControllerTest {
                 );
     }
 
+    @DisplayName("할일 수정 성공")
+    @Test
+    void updateTodo() throws Exception {
+        // given
+        Todo todo = saveTodo("testuser", "hello", "hi");
+        var request = new UpdateTodoRequest(todo.getId(), "after", "content");
+        // when // then
+        mockMvc.perform(patch("/todo")
+                        .with(user("testuser"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(request))
+                )
+                .andDo(print())
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$.id").exists(),
+                        jsonPath("$.author").value("testuser"),
+                        jsonPath("$.title").value("after"),
+                        jsonPath("$.content").value("content"),
+                        jsonPath("$.createdAt").exists(),
+                        jsonPath("$.content").exists()
+                );
+
+    }
+
+    @DisplayName("할일 수정 실패 : 수정자와 작성자가 다른 경우")
+    @Test
+    void updateTodoWhenFail() throws Exception {
+        // given
+        Todo todo = saveTodo("testuser", "hello", "hi");
+        var request = new UpdateTodoRequest(todo.getId(), "after", "content");
+        // when // then
+        mockMvc.perform(patch("/todo")
+                        .with(user("otheruser"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(request))
+                )
+                .andDo(print())
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$.status").value("unauthorized"),
+                        jsonPath("$.message").value("작성자만 삭제/수정할 수 있습니다.")
+                );
+    }
+
+    @DisplayName("할일 완료처리 성공")
+    @Test
+    void completeTodo() throws Exception {
+        // given
+        Todo todo = saveTodo("testuser", "hello", "hi");
+        // when // then
+        mockMvc.perform(patch("/todo/" + todo.getId())
+                        .with(user("testuser"))
+                )
+                .andDo(print())
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$.status").value("success"),
+                        jsonPath("$.message").value("할일 완료")
+                );
+    }
+
+    @DisplayName("할일 완료처리 실패 : 작성자가 요청하지 않은 경우")
+    @Test
+    void completeTodoFailWhenOtherUserRequest() throws Exception {
+        // given
+        Todo todo = saveTodo("testuser", "hello", "hi");
+        // when // then
+        mockMvc.perform(patch("/todo/" + todo.getId())
+                        .with(user("otheruser"))
+                )
+                .andDo(print())
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$.status").value("unauthorized"),
+                        jsonPath("$.message").value("작성자만 삭제/수정할 수 있습니다.")
+                );
+    }
+
+    @DisplayName("할일 삭제 성공")
+    @Test
+    void deleteTodo() throws Exception {
+        // given
+        Todo todo = saveTodo("testuser", "hello", "hi");
+        // when // then
+        mockMvc.perform(delete("/todo/" + todo.getId())
+                        .with(user("testuser"))
+                )
+                .andDo(print())
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$.status").value("success"),
+                        jsonPath("$.message").value("할일 삭제 완료")
+                );
+    }
+
+    @DisplayName("할일 삭제 실패 : 작성자가 요청하지 않은 경우i")
+    @Test
+    void deleteTodoWhenOtherUserRequest() throws Exception {
+        // given
+        Todo todo = saveTodo("testuser", "hello", "hi");
+        // when // then
+        mockMvc.perform(delete("/todo/" + todo.getId())
+                        .with(user("otheruser"))
+                )
+                .andDo(print())
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$.status").value("unauthorized"),
+                        jsonPath("$.message").value("작성자만 삭제/수정할 수 있습니다.")
+                );
+
+    }
+
     private Todo saveTodo(String author, String title, String content) {
         return todoRepository.saveAndFlush(Todo.builder()
                 .title(title)
