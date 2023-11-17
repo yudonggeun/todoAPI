@@ -7,6 +7,7 @@ import com.example.todo.dto.CommentInfo;
 import com.example.todo.dto.request.CreateCommentRequest;
 import com.example.todo.dto.request.UpdateCommentRequest;
 import com.example.todo.repository.CommentRepository;
+import com.example.todo.repository.TodoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,8 +20,13 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CommentService {
     private final CommentRepository commentRepository;
+    private final TodoRepository todoRepository;
 
     public CommentInfo createComment(CreateCommentRequest request) {
+
+        if(todoRepository.existsById(request.todoId())){
+            throw new NotExistException();
+        }
 
         Comment comment = commentRepository.save(Comment.builder()
                 .author(getLoginCustomerName())

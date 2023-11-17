@@ -4,7 +4,7 @@ import com.example.todo.common.exception.NotExistException;
 import com.example.todo.domain.Todo;
 import com.example.todo.dto.TodoInfo;
 import com.example.todo.dto.TodoInfoEntry;
-import com.example.todo.dto.TodoSearchParam;
+import com.example.todo.dto.request.TodoSearchParam;
 import com.example.todo.dto.TodoShortInfo;
 import com.example.todo.dto.request.CreateTodoRequest;
 import com.example.todo.dto.request.UpdateTodoRequest;

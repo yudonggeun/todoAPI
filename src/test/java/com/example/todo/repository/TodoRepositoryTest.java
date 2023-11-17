@@ -1,7 +1,7 @@
 package com.example.todo.repository;
 
 import com.example.todo.domain.Todo;
-import com.example.todo.dto.TodoSearchParam;
+import com.example.todo.dto.request.TodoSearchParam;
 import com.example.todo.dto.TodoShortInfo;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

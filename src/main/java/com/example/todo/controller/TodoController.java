@@ -1,8 +1,8 @@
 package com.example.todo.controller;
 
 import com.example.todo.dto.TodoInfo;
-import com.example.todo.dto.TodoSearchParam;
 import com.example.todo.dto.request.CreateTodoRequest;
+import com.example.todo.dto.request.TodoSearchParam;
 import com.example.todo.dto.request.UpdateTodoRequest;
 import com.example.todo.dto.response.MessageResponse;
 import com.example.todo.dto.response.TodoInfoListResponse;

@@ -1,6 +1,6 @@
 package com.example.todo.repository;
 
-import com.example.todo.dto.TodoSearchParam;
+import com.example.todo.dto.request.TodoSearchParam;
 import com.example.todo.dto.TodoShortInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;

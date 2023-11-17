@@ -18,7 +18,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.todo.common.util.JwtUtil.*;
+import static com.example.todo.common.util.JwtUtil.ACCESS_TYPE;
+import static com.example.todo.common.util.JwtUtil.AUTHORIZATION_HEADER;
 
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
