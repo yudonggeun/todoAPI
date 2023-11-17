@@ -24,7 +24,7 @@ public class CommentService {
 
     public CommentInfo createComment(CreateCommentRequest request) {
 
-        if(todoRepository.existsById(request.todoId())){
+        if(!todoRepository.existsById(request.todoId())){
             throw new NotExistException();
         }
 

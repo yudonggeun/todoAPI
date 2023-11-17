@@ -20,6 +20,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class TodoControllerTest extends ControllerTest {
 
+    @Autowired
+    TodoRepository todoRepository;
+    @Autowired
+    CommentRepository commentRepository;
+
+    @AfterEach
+    void clear() {
+        commentRepository.deleteAll();
+        todoRepository.deleteAll();
+    }
+
     @DisplayName("인증하지 않은 경우")
     @Nested
     class NoAuthenticatedCases {
@@ -97,17 +108,6 @@ class TodoControllerTest extends ControllerTest {
                     jsonPath("$.message").value("토큰이 유효하지 않습니다.")};
         }
 
-    }
-
-    @Autowired
-    TodoRepository todoRepository;
-    @Autowired
-    CommentRepository commentRepository;
-
-    @AfterEach
-    void clear() {
-        commentRepository.deleteAll();
-        todoRepository.deleteAll();
     }
 
     @DisplayName("할일 생성 성공")
