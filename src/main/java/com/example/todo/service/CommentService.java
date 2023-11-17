@@ -54,6 +54,7 @@ public class CommentService {
         commentRepository.delete(comment);
     }
 
+    // Comment를 넘기는 것보다 String author를 넘겨서 의존성을 낮추는 것이 좋을까요?
     private void checkLoginCustomerEqualAuthorOfComment(Comment comment) {
         if (!comment.getAuthor().equals(getLoginCustomerName())) {
             throw new AccessDeniedException("작성자만 삭제/수정할 수 있습니다.");

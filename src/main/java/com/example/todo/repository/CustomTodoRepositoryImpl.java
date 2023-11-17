@@ -23,6 +23,7 @@ public class CustomTodoRepositoryImpl implements CustomTodoRepository {
             query += " and title like '%" + condition.title() + "%'";
         }
 
+        // (queryDsl를 사용하지 않고 구현할 때) jdbc template은 잘 사용하지 않아서 더 좋은 구현에 대해서 궁금합니다.
         return jdbcTemplate.query(query, (rs, rowNum) -> new TodoShortInfo(
                 rs.getLong("ID"),
                 rs.getString("AUTHOR"),

@@ -14,6 +14,11 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.Optional;
 
+/*
+강의의 JwtUtil를 복사해서 조금 수정한 클래스입니다.
+패키지 구성할 때 뭔가 깔끔하게 정리하지 못한 것 같은데요. 어떤 식으로 정리하는 것이 좋을까요?
+추가로 같은 패키지의 UserRole의 위치도 조금 꺼림직합니다.
+ */
 @Component
 @Slf4j
 public class JwtUtil {

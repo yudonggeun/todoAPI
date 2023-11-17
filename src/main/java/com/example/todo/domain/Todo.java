@@ -31,6 +31,9 @@ public class Todo extends BaseTimeEntity {
     private Todo(Long id){
         super(id);
     }
+
+    // 댓글 생성시 할일의 id를 매핑할 때 사용하려는 mock 스러운 객체 생성 메서드인데..
+    // 이런 방식이 불필요한 구현인가요?
     public static Todo foreignKey(Long id){
         return new Todo(id);
     }
