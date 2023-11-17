@@ -59,7 +59,6 @@ class AuthControllerTest extends ControllerTest {
         // given
         String username = "testuser";
         String password = "testT12345";
-
         var request = new LoginRequest(username, password);
         // when // then
         mockMvc.perform(post("/auth/login")
