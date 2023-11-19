@@ -5,31 +5,27 @@ import com.example.todo.dto.request.CreateTodoRequest;
 import com.example.todo.dto.request.UpdateTodoRequest;
 import com.example.todo.repository.CommentRepository;
 import com.example.todo.repository.TodoRepository;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultMatcher;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Transactional
 class TodoControllerTest extends ControllerTest {
 
     @Autowired
     TodoRepository todoRepository;
     @Autowired
     CommentRepository commentRepository;
-
-    @AfterEach
-    void clear() {
-        commentRepository.deleteAll();
-        todoRepository.deleteAll();
-    }
 
     @DisplayName("인증하지 않은 경우")
     @Nested

@@ -20,16 +20,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+//@Transactional
 class AuthControllerTest extends ControllerTest {
 
     @Autowired
-    CustomerRepository cutomerRepository;
+    CustomerRepository customerRepository;
     @Autowired
     JwtUtil jwtUtil;
 
     @AfterEach
     void clear() {
-        cutomerRepository.deleteAll();
+        customerRepository.deleteAll();
     }
 
     @DisplayName("로그인 성공")
@@ -113,10 +114,11 @@ class AuthControllerTest extends ControllerTest {
     @Test
     void signupFailWhenDuplicatedUsername() throws Exception {
         // given
-        String username = "testuser";
-        String password = "testT12345";
+        var username = "testuser";
+        var password = "testT12345";
         var request = new SignUpRequest(username, password);
         saveCustomer(username, password);
+
         // when // then
         mockMvc.perform(post("/auth/signup")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -159,8 +161,8 @@ class AuthControllerTest extends ControllerTest {
         );
     }
 
-    private void saveCustomer(String username, String password) {
-        cutomerRepository.save(Customer.builder()
+    private Customer saveCustomer(String username, String password) {
+        return customerRepository.saveAndFlush(Customer.builder()
                 .username(username)
                 .password(password)
                 .authority(List.of(new Authority(UserRole.USER)))
