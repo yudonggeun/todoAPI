@@ -1,6 +1,5 @@
 package com.example.todo;
 
-import com.example.todo.domain.Customer;
 import com.example.todo.repository.CustomerRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;

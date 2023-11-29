@@ -4,9 +4,9 @@ import com.example.todo.common.exception.NotExistException;
 import com.example.todo.domain.Todo;
 import com.example.todo.dto.TodoInfo;
 import com.example.todo.dto.TodoInfoEntry;
-import com.example.todo.dto.request.TodoSearchParam;
 import com.example.todo.dto.TodoShortInfo;
 import com.example.todo.dto.request.CreateTodoRequest;
+import com.example.todo.dto.request.TodoSearchParam;
 import com.example.todo.dto.request.UpdateTodoRequest;
 import com.example.todo.dto.response.TodoInfoListResponse;
 import com.example.todo.repository.CommentRepository;
@@ -113,8 +113,8 @@ public class TodoService {
         }
     }
     // Authentication 객체를 파라미터로 입력 바아서 인증 정보를 조회하는 방식과
+    // public void sample(Authentication auth){}
     // context에서 조회해서 가져오는 방식 어떤 것을 사용하는 것이 좋은지 잘 모르겠습니다.
-
     private String getLoginCustomerName() {
         return SecurityContextHolder
                 .getContext()
