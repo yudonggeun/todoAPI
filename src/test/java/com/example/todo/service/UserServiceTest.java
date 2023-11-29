@@ -56,5 +56,41 @@ class UserServiceTest extends IntegrationTest {
                 .hasMessage("동일한 유저 이름은 사용할 수 없습니다.");
     }
 
+    @DisplayName("가입된 유저의 정보를 조회시 등록했던 유저의 정보와 일치한다.")
+    @Test
+    void when_get_user_then_match_expected_info() {
+        // given
+        customerRepository.save(Customer.builder()
+                .username("user1234")
+                .password("sdafajsldkfj234D")
+                .authority(List.of(new Authority(USER)))
+                .build());
+        var request = new LoginRequest("user1234", "sdafajsldkfj234D");
+        // when
+        CustomerInfo info = userService.getCustomerInfo(request);
+        // then
+        assertThat(info).extracting("name", "role")
+                .containsExactly("user1234", USER);
+    }
 
+    @DisplayName("가입된 유저 정보 조회시 입력 정보가 틀리면 NotExistException 예외가 발생한다. ")
+    @ParameterizedTest(name = "{arguments}")
+    @CsvSource(useHeadersInDisplayName = true, textBlock = """
+            USERNAME,   PASSWORD
+            notExist12, sdfasdfasd
+            user1234,   longPassword
+            user1234, 
+            notExist, sdafajsldkfj234D
+            """)
+    void when_get_user_then_throw_NotExistException(String username, String password) {
+        // given
+        customerRepository.save(Customer.builder()
+                .username("user1234")
+                .password("sdafajsldkfj234D")
+                .authority(List.of(new Authority(USER)))
+                .build());
+        var request = new LoginRequest(username, password);
+        // when // then
+        assertThatThrownBy(() -> userService.getCustomerInfo(request));
+    }
 }
