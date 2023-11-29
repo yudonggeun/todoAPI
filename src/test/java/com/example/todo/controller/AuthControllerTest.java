@@ -1,5 +1,6 @@
 package com.example.todo.controller;
 
+import com.example.todo.IntegrationTest;
 import com.example.todo.common.util.JwtUtil;
 import com.example.todo.common.util.UserRole;
 import com.example.todo.domain.Authority;
@@ -21,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 //@Transactional
-class AuthControllerTest extends ControllerTest {
+class AuthControllerTest extends IntegrationTest {
 
     @Autowired
     CustomerRepository customerRepository;

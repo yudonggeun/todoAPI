@@ -1,5 +1,6 @@
 package com.example.todo.controller;
 
+import com.example.todo.IntegrationTest;
 import com.example.todo.domain.Comment;
 import com.example.todo.domain.Todo;
 import com.example.todo.dto.request.CreateCommentRequest;
@@ -19,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class CommentControllerTest extends ControllerTest {
+class CommentControllerTest extends IntegrationTest {
 
     @Autowired
     TodoRepository todoRepository;

@@ -37,9 +37,9 @@ public class ExceptionController {
     }
 
     @Hidden
-    @ExceptionHandler(NotExistException.class)
+    @ExceptionHandler({NotExistException.class, IllegalArgumentException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public MessageResponse notExist(Exception e){
+    public MessageResponse badRequest(Exception e){
         return new MessageResponse("bad request", e.getMessage());
     }
 }

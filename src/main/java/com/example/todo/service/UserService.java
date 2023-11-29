@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -22,6 +23,10 @@ public class UserService {
     private final CustomerRepository customerRepository;
 
     public void signUp(SignUpRequest request) {
+
+        if (customerRepository.existsByUsername(request.username())) {
+            throw new IllegalArgumentException("동일한 유저 이름은 사용할 수 없습니다.");
+        }
         customerRepository.save(Customer.builder()
                 .password(request.password())
                 .username(request.username())
@@ -30,7 +35,8 @@ public class UserService {
     }
 
     public CustomerInfo getCustomerInfo(LoginRequest req) {
-        Customer customer = customerRepository.findByUsernameAndPassword(req.username(), req.password())
+        Customer customer = customerRepository
+                .findByUsernameAndPassword(req.username(), req.password())
                 .orElseThrow(() -> new NotExistException("회원을 찾을 수 없습니다."));
         return CustomerInfo.of(customer);
     }

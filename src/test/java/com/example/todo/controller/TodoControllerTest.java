@@ -1,5 +1,6 @@
 package com.example.todo.controller;
 
+import com.example.todo.IntegrationTest;
 import com.example.todo.domain.Todo;
 import com.example.todo.dto.request.CreateTodoRequest;
 import com.example.todo.dto.request.UpdateTodoRequest;
@@ -20,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
-class TodoControllerTest extends ControllerTest {
+class TodoControllerTest extends IntegrationTest {
 
     @Autowired
     TodoRepository todoRepository;

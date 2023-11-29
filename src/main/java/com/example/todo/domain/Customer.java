@@ -24,7 +24,6 @@ public class Customer {
     @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
     private final List<Authority> authority = new ArrayList<>();
 
-
     @Builder
     private Customer(String username, String password, List<Authority> authority) {
         this.username = username;

@@ -1,5 +1,7 @@
-package com.example.todo.controller;
+package com.example.todo;
 
+import com.example.todo.domain.Customer;
+import com.example.todo.repository.CustomerRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -10,9 +12,11 @@ import org.springframework.test.web.servlet.MockMvc;
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
-public class ControllerTest {
+public class IntegrationTest {
     @Autowired
-    MockMvc mockMvc;
+    protected MockMvc mockMvc;
     @Autowired
-    ObjectMapper mapper;
+    protected ObjectMapper mapper;
+    @Autowired
+    protected CustomerRepository customerRepository;
 }
