@@ -4,18 +4,21 @@ import com.example.todo.domain.Comment;
 import com.example.todo.domain.Todo;
 import com.example.todo.dto.CommentInfo;
 import com.example.todo.dto.request.CreateCommentRequest;
+import com.example.todo.dto.request.UpdateCommentRequest;
 import com.example.todo.repository.CommentRepository;
 import com.example.todo.repository.TodoRepository;
 import com.example.todo.security.JwtToken;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -28,7 +31,8 @@ class CommentServiceTest {
 
     TodoRepository todoRepository = mock();
     CommentRepository commentRepository = mock();
-    CommentService commentService = new CommentService(commentRepository, todoRepository);
+    LoginStatusService loginStatusService = mock();
+    CommentService commentService = new CommentService(commentRepository, todoRepository, loginStatusService);
 
     @BeforeEach
     void initSecurityContext() {
@@ -62,11 +66,57 @@ class CommentServiceTest {
 
     @DisplayName("없는 할일에 댓글을 작성하면 NotExistException 이 발생한다.")
     @Test
-    void test() {
+    void when_todo_is_not_exist_then_throw_exception() {
         // given
         var request = new CreateCommentRequest(1L, "아주 잘했어요!");
         when(todoRepository.existsById(any())).thenReturn(false);
         // when // then
         assertThatThrownBy(() -> commentService.createComment(request));
+    }
+
+    @DisplayName("댓글 수정시 로그인하지 않으면 에외가 발생한다.")
+    @Test
+    void when_not_login_then_throw_exception() {
+        // given
+        var request = new UpdateCommentRequest(1L, "change content");
+        when(loginStatusService.getLoginCustomerName()).thenThrow(IllegalArgumentException.class);
+        // when // then
+        assertThatThrownBy(() -> commentService.updateComment(request));
+    }
+
+    @DisplayName("댓글 수정시 작성자가 아니라면 예외가 발생한다.")
+    @Test
+    void when_loginUser_is_not_author_then_match_changed_content() {
+        // given
+        var request = new UpdateCommentRequest(1L, "change content");
+        when(loginStatusService.getLoginCustomerName()).thenReturn("test1234");
+        when(commentRepository.findById(request.id()))
+                .thenReturn(Optional.of(Comment.builder()
+                        .todo(Todo.foreignKey(1L))
+                        .content("default")
+                        .author("other")
+                        .build()));
+        // when // then
+        assertThatThrownBy(() -> commentService.updateComment(request))
+                .isInstanceOf(AccessDeniedException.class)
+                .hasMessage("작성자만 삭제/수정할 수 있습니다.");
+    }
+    @DisplayName("댓글 수정시 수정 내용이 반영된다.")
+    @Test
+    void when_update_comment_then_match_changed_content() {
+        // given
+        var request = new UpdateCommentRequest(1L, "change content");
+        when(loginStatusService.getLoginCustomerName()).thenReturn("test1234");
+        when(commentRepository.findById(request.id()))
+                .thenReturn(Optional.of(Comment.builder()
+                        .todo(Todo.foreignKey(1L))
+                        .content("default")
+                        .author("test1234")
+                        .build()));
+        // when
+        CommentInfo changedInfo = commentService.updateComment(request);
+        // then
+        assertThat(changedInfo.content()).isEqualTo(request.content());
+        assertThat(changedInfo.author()).isEqualTo("test1234");
     }
 }
