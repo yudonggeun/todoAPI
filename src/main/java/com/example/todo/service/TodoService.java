@@ -13,7 +13,6 @@ import com.example.todo.repository.CommentRepository;
 import com.example.todo.repository.TodoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,9 +32,11 @@ public class TodoService {
 
     private final TodoRepository todoRepository;
     private final CommentRepository commentRepository;
+    private final LoginStatusService loginStatusService;
 
     public TodoInfo createTodo(CreateTodoRequest req) {
-        Todo entity = todoRepository.save(req.toEntity(getLoginCustomerName()));
+        String loginUserName = loginStatusService.getLoginCustomerName();
+        Todo entity = todoRepository.save(req.toEntity(loginUserName));
         return TodoInfo.of(entity);
     }
 
@@ -52,6 +53,7 @@ public class TodoService {
                 .findAllByIsCompleteAndCondition(false, condition).stream()
                 .map(this::hidePrivateColumn)
                 // 정렬을 db에서 하지않고 서버에서 수행해서 db의 자원을 절약하고자 사용했는데요. db 부하가 크지 않은 시스템에서는 db에서 하는 것이 좋겠죠?
+                // 아니면 인덱스를 활용하는 것이 좋을까요?
                 .sorted(byCreatedAtDesc())
                 .collect(groupByAuthor());
 
@@ -75,7 +77,8 @@ public class TodoService {
     }
 
     private TodoShortInfo hidePrivateColumn(TodoShortInfo todo) {
-        if (!todo.author().equals(getLoginCustomerName())) {
+        String loginUserName = loginStatusService.getLoginCustomerName();
+        if (!todo.author().equals(loginUserName)) {
             return new TodoShortInfo(todo.id(), todo.author(), todo.title(), null, todo.createdAt());
         }
         return todo;
@@ -108,17 +111,9 @@ public class TodoService {
     }
 
     private void checkLoginCustomerEqualAuthorOfTodo(Todo todo, String errorMessage) {
-        if (!todo.getAuthor().equals(getLoginCustomerName())) {
+        String loginUserName = loginStatusService.getLoginCustomerName();
+        if (!todo.getAuthor().equals(loginUserName)) {
             throw new AccessDeniedException(errorMessage);
         }
-    }
-    // Authentication 객체를 파라미터로 입력 바아서 인증 정보를 조회하는 방식과
-    // public void sample(Authentication auth){}
-    // context에서 조회해서 가져오는 방식 어떤 것을 사용하는 것이 좋은지 잘 모르겠습니다.
-    private String getLoginCustomerName() {
-        return SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getName();
     }
 }
