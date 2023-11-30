@@ -18,6 +18,7 @@ import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -45,14 +46,16 @@ class AuthControllerTest extends IntegrationTest {
         var request = new LoginRequest(username, password);
         // when // then
         mockMvc.perform(post("/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(request))
-        ).andExpectAll(
-                status().isOk(),
-                jsonPath("$.customerName").value("testuser"),
-                jsonPath("$.accessToken").exists(),
-                jsonPath("$.refreshToken").exists()
-        );
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(request))
+                )
+                .andDo(print())
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$.customerName").value("testuser"),
+                        jsonPath("$.accessToken").exists(),
+                        jsonPath("$.refreshToken").exists()
+                );
     }
 
     @DisplayName("로그인 성공")

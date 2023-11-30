@@ -101,6 +101,7 @@ class CommentServiceTest {
                 .isInstanceOf(AccessDeniedException.class)
                 .hasMessage("작성자만 삭제/수정할 수 있습니다.");
     }
+
     @DisplayName("댓글 수정시 수정 내용이 반영된다.")
     @Test
     void when_update_comment_then_match_changed_content() {
