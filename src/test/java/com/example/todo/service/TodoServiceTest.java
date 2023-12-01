@@ -127,7 +127,6 @@ class TodoServiceTest {
     void update_when_access_not_exist_todo_then_throw_NotExistException() {
         // given
         var request = new UpdateTodoRequest(1L, "TIL 쓰기", "그냥 하지 말까?");
-        given(repository.findById(any())).willReturn(Optional.empty());
         given(loginStatusService.getLoginCustomerName()).willReturn("jon");
         // when // then
         assertThatThrownBy(() -> service.updateTodo(request))
@@ -135,4 +134,53 @@ class TodoServiceTest {
                 .hasMessage("존재하지 않은 할일 목록입니다.");
     }
 
+    @DisplayName("작성자는 할일을 완료시킬 수 있다.")
+    @Test
+    void complete_when_author_request_then_done() {
+        // given
+        var todoId = 1L;
+        var todo = Todo.builder()
+                .author("유동근")
+                .content("잘하자")
+                .title("TIL?")
+                .build();
+
+        given(repository.findById(todoId)).willReturn(Optional.of(todo));
+        given(loginStatusService.getLoginCustomerName()).willReturn("유동근");
+        // when
+        service.complete(todoId);
+        // then
+        assertThat(todo.getIsComplete()).isTrue();
+    }
+
+    @DisplayName("작성자가 아니라면 할일을 완료시킬 수 없다.")
+    @Test
+    void complete_when_other_request_then_done() {
+        // given
+        var todoId = 1L;
+        var todo = Todo.builder()
+                .author("유동근")
+                .content("잘하자")
+                .title("TIL?")
+                .build();
+
+        given(repository.findById(todoId)).willReturn(Optional.of(todo));
+        given(loginStatusService.getLoginCustomerName()).willReturn("jon");
+        // when // then
+        assertThatThrownBy(() -> service.complete(todoId))
+                .isInstanceOf(AccessDeniedException.class)
+                .hasMessage("작성자만 삭제/수정할 수 있습니다.");
+        assertThat(todo.getIsComplete()).isFalse();
+    }
+
+    @DisplayName("존재하지 않은 할일은 완료처리할 수 없다.")
+    @Test
+    void complete_when_not_exist_then_throw_NotExistException() {
+        // given
+        given(loginStatusService.getLoginCustomerName()).willReturn("jon");
+        // when // then
+        assertThatThrownBy(() -> service.complete(1L))
+                .isInstanceOf(NotExistException.class)
+                .hasMessage("존재하지 않은 할일 목록입니다.");
+    }
 }
