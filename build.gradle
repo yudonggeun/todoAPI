@@ -36,6 +36,9 @@ dependencies {
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
     // mysql
     runtimeOnly 'mysql:mysql-connector-java:8.0.21' //mysql
+    // fixture monkey
+    testImplementation 'com.navercorp.fixturemonkey:fixture-monkey-starter:1.0.0'
+
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testRuntimeOnly'com.h2database:h2'
     annotationProcessor 'org.projectlombok:lombok'
