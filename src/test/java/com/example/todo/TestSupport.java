@@ -9,6 +9,7 @@ public class TestSupport {
 
     protected FixtureMonkey constructFixture;
     protected FixtureMonkey builderFixture;
+    protected FixtureMonkey setterFixture;
 
     public TestSupport() {
         this.constructFixture = FixtureMonkey.builder()
@@ -22,6 +23,10 @@ public class TestSupport {
 
         this.builderFixture = FixtureMonkey.builder()
                 .objectIntrospector(builderArbitraryIntrospector)
+                .defaultNotNull(true)
+                .plugin(new JakartaValidationPlugin()).build();
+
+        this.setterFixture = FixtureMonkey.builder()
                 .defaultNotNull(true)
                 .plugin(new JakartaValidationPlugin()).build();
     }

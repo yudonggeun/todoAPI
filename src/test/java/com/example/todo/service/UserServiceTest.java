@@ -19,6 +19,7 @@ import java.util.Optional;
 import static com.example.todo.common.util.UserRole.USER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.BDDAssertions.then;
 
 @Transactional
 @DisplayName("유저 서비스 테스트")
@@ -60,17 +61,17 @@ class UserServiceTest extends IntegrationTest {
     @Test
     void when_get_user_then_match_expected_info() {
         // given
-        customerRepository.save(Customer.builder()
+        Customer customer = customerRepository.save(Customer.builder()
                 .username("user1234")
                 .password("sdafajsldkfj234D")
                 .authority(List.of(new Authority(USER)))
                 .build());
-        var request = new LoginRequest("user1234", "sdafajsldkfj234D");
+        var request = new LoginRequest(customer.getUsername(), customer.getPassword());
         // when
         CustomerInfo info = userService.getCustomerInfo(request);
         // then
-        assertThat(info).extracting("name", "role")
-                .containsExactly("user1234", USER);
+        then(info.name()).isEqualTo(customer.getUsername());
+        then(info.role()).isEqualTo(USER);
     }
 
     @DisplayName("가입된 유저 정보 조회시 입력 정보가 틀리면 NotExistException 예외가 발생한다. ")
@@ -84,11 +85,6 @@ class UserServiceTest extends IntegrationTest {
             """)
     void when_get_user_then_throw_NotExistException(String username, String password) {
         // given
-        customerRepository.save(Customer.builder()
-                .username("user1234")
-                .password("sdafajsldkfj234D")
-                .authority(List.of(new Authority(USER)))
-                .build());
         var request = new LoginRequest(username, password);
         // when // then
         assertThatThrownBy(() -> userService.getCustomerInfo(request));

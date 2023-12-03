@@ -1,5 +1,6 @@
 package com.example.todo.service;
 
+import com.example.todo.TestSupport;
 import com.example.todo.common.exception.NotExistException;
 import com.example.todo.domain.Todo;
 import com.example.todo.dto.TodoInfo;
@@ -16,15 +17,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.BDDAssertions.then;
+import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 @DisplayName("할일 서비스 테스트")
-class TodoServiceTest {
+class TodoServiceTest extends TestSupport {
 
     TodoRepository repository = mock();
     CommentRepository commentRepository = mock();
@@ -36,14 +38,12 @@ class TodoServiceTest {
     void when_other_user_get_todo_then_throw_exception() {
         // given
         var id = 1L;
-        var todo = Todo.builder()
-                .author("test")
-                .content("content")
-                .build();
+        var todo = builderFixture.giveMeBuilder(Todo.class)
+                .set("author", "author").sample();
         given(repository.findFetchById(1L)).willReturn(Optional.of(todo));
         given(loginStatusService.getLoginCustomerName()).willReturn("other user");
         // when // then
-        assertThatThrownBy(() -> service.getTodoInfo(id))
+        thenThrownBy(() -> service.getTodoInfo(id))
                 .isInstanceOf(AccessDeniedException.class)
                 .hasMessage("작성자만 조회할 수 있습니다.");
     }
@@ -74,9 +74,9 @@ class TodoServiceTest {
         // when
         TodoInfo info = service.getTodoInfo(id);
         // then
-        assertThat(info.author()).isEqualTo(author);
-        assertThat(info.content()).isEqualTo(content);
-        assertThat(info.title()).isEqualTo(title);
+        then(info.author()).isEqualTo(author);
+        then(info.content()).isEqualTo(content);
+        then(info.title()).isEqualTo(title);
     }
 
     private String randomString() {
@@ -87,11 +87,7 @@ class TodoServiceTest {
     @Test
     void update_when_author_request_then_return_updated_todo_info() {
         // given
-        var todo = Todo.builder()
-                .author("유동근")
-                .content("잘하자")
-                .title("TIL?")
-                .build();
+        var todo = builderFixture.giveMeBuilder(Todo.class).set("author", "유동근").sample();
 
         var request = new UpdateTodoRequest(1L, "TIL 쓰기", "그냥 하지 말까?");
         given(repository.findById(any())).willReturn(Optional.of(todo));
@@ -99,8 +95,8 @@ class TodoServiceTest {
         // when
         TodoInfo info = service.updateTodo(request);
         // then
-        assertThat(info.title()).isEqualTo("TIL 쓰기");
-        assertThat(info.content()).isEqualTo("그냥 하지 말까?");
+        then(info.title()).isEqualTo("TIL 쓰기");
+        then(info.content()).isEqualTo("그냥 하지 말까?");
     }
 
     @DisplayName("작성자가 아니라면 할일을 수정할 수 없다.")
@@ -117,7 +113,7 @@ class TodoServiceTest {
         given(repository.findById(any())).willReturn(Optional.of(todo));
         given(loginStatusService.getLoginCustomerName()).willReturn("jon");
         // when // then
-        assertThatThrownBy(() -> service.updateTodo(request))
+        thenThrownBy(() -> service.updateTodo(request))
                 .isInstanceOf(AccessDeniedException.class)
                 .hasMessage("작성자만 삭제/수정할 수 있습니다.");
     }
@@ -129,7 +125,7 @@ class TodoServiceTest {
         var request = new UpdateTodoRequest(1L, "TIL 쓰기", "그냥 하지 말까?");
         given(loginStatusService.getLoginCustomerName()).willReturn("jon");
         // when // then
-        assertThatThrownBy(() -> service.updateTodo(request))
+        thenThrownBy(() -> service.updateTodo(request))
                 .isInstanceOf(NotExistException.class)
                 .hasMessage("존재하지 않은 할일 목록입니다.");
     }
@@ -150,7 +146,7 @@ class TodoServiceTest {
         // when
         service.complete(todoId);
         // then
-        assertThat(todo.getIsComplete()).isTrue();
+        then(todo.getIsComplete()).isTrue();
     }
 
     @DisplayName("작성자가 아니라면 할일을 완료시킬 수 없다.")
@@ -167,10 +163,10 @@ class TodoServiceTest {
         given(repository.findById(todoId)).willReturn(Optional.of(todo));
         given(loginStatusService.getLoginCustomerName()).willReturn("jon");
         // when // then
-        assertThatThrownBy(() -> service.complete(todoId))
+        thenThrownBy(() -> service.complete(todoId))
                 .isInstanceOf(AccessDeniedException.class)
                 .hasMessage("작성자만 삭제/수정할 수 있습니다.");
-        assertThat(todo.getIsComplete()).isFalse();
+        then(todo.getIsComplete()).isFalse();
     }
 
     @DisplayName("존재하지 않은 할일은 완료처리할 수 없다.")

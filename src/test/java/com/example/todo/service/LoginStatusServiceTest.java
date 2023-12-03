@@ -1,5 +1,6 @@
 package com.example.todo.service;
 
+import com.example.todo.TestSupport;
 import com.example.todo.security.JwtToken;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,28 +15,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("로그인 상태 서비스 테스트")
-class LoginStatusServiceTest {
+class LoginStatusServiceTest extends TestSupport {
 
     LoginStatusService loginStatusService = new LoginStatusService();
 
     @BeforeEach
-    void clearSecurityContext(){
+    void clearSecurityContext() {
         SecurityContextHolder.clearContext();
     }
+
     @DisplayName("인증이 되었다면 인증된 유저의 이름을 반환한다.")
     @Test
     void when_set_authentication_then_return_username() {
         // given
-        var user = User.builder()
-                .username("user")
-                .password("1234")
-                .build();
+        var user = builderFixture.giveMeOne(User.class);
         Authentication auth = new JwtToken(user, List.of());
         SecurityContextHolder.getContext().setAuthentication(auth);
         // when
         String loginUserName = loginStatusService.getLoginCustomerName();
         // then
-        assertThat(loginUserName).isEqualTo("user");
+        assertThat(loginUserName).isEqualTo(user.getUsername());
     }
 
     @DisplayName("인증이 되지 않았다면 에러를 반환한다.")

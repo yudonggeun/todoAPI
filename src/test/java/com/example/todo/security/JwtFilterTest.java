@@ -17,8 +17,11 @@ import java.util.Optional;
 import static com.example.todo.common.util.JwtUtil.ACCESS_TYPE;
 import static com.example.todo.common.util.JwtUtil.AUTHORIZATION_HEADER;
 import static com.example.todo.common.util.UserRole.USER;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.*;
+import static org.assertj.core.api.BDDAssertions.then;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 @DisplayName("JWT 인증 필터 테스트")
 class JwtFilterTest {
@@ -45,8 +48,9 @@ class JwtFilterTest {
         jwtFilter.doFilterInternal(request, null, mock(FilterChain.class));
         // then
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        assertThat(auth.getName()).isEqualTo(username);
-        assertThat(auth.isAuthenticated()).isTrue();
+
+        then(auth.getName()).isEqualTo(username);
+        then(auth.isAuthenticated()).isTrue();
     }
 
     @DisplayName("유효하지 않은 토큰이거나 토큰이 없다면 인증 정보는 저장되지 않는다.")
@@ -58,7 +62,6 @@ class JwtFilterTest {
         // when
         jwtFilter.doFilterInternal(mock(HttpServletRequest.class), null, mock(FilterChain.class));
         // then
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        assertThat(auth).isNull();
+        then(SecurityContextHolder.getContext().getAuthentication()).isNull();
     }
 }
