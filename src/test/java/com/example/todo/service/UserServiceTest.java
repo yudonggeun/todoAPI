@@ -17,9 +17,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.example.todo.common.util.UserRole.USER;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.BDDAssertions.then;
+import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 
 @Transactional
 @DisplayName("유저 서비스 테스트")
@@ -37,7 +36,7 @@ class UserServiceTest extends IntegrationTest {
         userService.signUp(request);
         Optional<Customer> signupUser = customerRepository.findByUsernameAndPassword(request.username(), request.password());
         // then
-        assertThat(signupUser).isPresent();
+        then(signupUser).isPresent();
     }
 
     @DisplayName("동일한 이름으로 회원가입시 에러가 발생한다.")
@@ -52,7 +51,7 @@ class UserServiceTest extends IntegrationTest {
 
         var request = new SignUpRequest("user1234", "a234Afdfd");
         // when // then
-        assertThatThrownBy(() -> userService.signUp(request))
+        thenThrownBy(() -> userService.signUp(request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("동일한 유저 이름은 사용할 수 없습니다.");
     }
@@ -87,6 +86,6 @@ class UserServiceTest extends IntegrationTest {
         // given
         var request = new LoginRequest(username, password);
         // when // then
-        assertThatThrownBy(() -> userService.getCustomerInfo(request));
+        thenThrownBy(() -> userService.getCustomerInfo(request));
     }
 }

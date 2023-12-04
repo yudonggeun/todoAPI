@@ -5,5 +5,5 @@ import org.springframework.test.context.ActiveProfiles;
 
 @DataJpaTest
 @ActiveProfiles("test")
-public class RepositoryTest {
+public class RepositoryTest extends TestSupport{
 }

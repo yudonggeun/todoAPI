@@ -45,8 +45,12 @@ public class Todo extends BaseTimeEntity {
     }
 
     public void update(UpdateTodoRequest request) {
-        if(request.title() != null) title = request.title();
+        setTitle(request.title());
         if(request.content() != null) content = request.content();
+    }
+
+    public void setTitle(String title){
+        if(title != null) this.title = title;
     }
 
     public void complete() {

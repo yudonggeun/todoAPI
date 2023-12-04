@@ -4,7 +4,10 @@ import com.example.todo.TestSupport;
 import com.example.todo.common.exception.NotExistException;
 import com.example.todo.domain.Todo;
 import com.example.todo.dto.TodoInfo;
+import com.example.todo.dto.TodoShortInfo;
+import com.example.todo.dto.request.TodoSearchParam;
 import com.example.todo.dto.request.UpdateTodoRequest;
+import com.example.todo.dto.response.TodoInfoListResponse;
 import com.example.todo.repository.CommentRepository;
 import com.example.todo.repository.TodoRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +16,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.security.access.AccessDeniedException;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -24,6 +29,7 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 
 @DisplayName("할일 서비스 테스트")
 class TodoServiceTest extends TestSupport {
@@ -141,6 +147,12 @@ class TodoServiceTest extends TestSupport {
                 .title("TIL?")
                 .build();
 
+//        set을 통해서 초기화를 하면 실수로 변수명을 다르게 작성할 수 있다는 점에서 조금 신경이 쓰이는데요?
+//        어떤 코드를 쓰는 것이 좋을 까요?
+//        var todo = builderFixture.giveMeBuilder(Todo.class)
+//                .set("author", "유동근")
+//                .sample();
+
         given(repository.findById(todoId)).willReturn(Optional.of(todo));
         given(loginStatusService.getLoginCustomerName()).willReturn("유동근");
         // when
@@ -178,5 +190,30 @@ class TodoServiceTest extends TestSupport {
         assertThatThrownBy(() -> service.complete(1L))
                 .isInstanceOf(NotExistException.class)
                 .hasMessage("존재하지 않은 할일 목록입니다.");
+    }
+
+    @DisplayName("조건에 맞는 저장된 할일 목록을 조회할 수 있다.")
+    @Test
+    void get_todo_list() {
+        // given
+        var condition = new TodoSearchParam("과제");
+        var result = new ArrayList<TodoShortInfo>();
+        // 과제 todo 저장
+        for (int i = 0; i < 10; i++) {
+            var todo = spy(builderFixture.giveMeBuilder(Todo.class)
+                    .maxSize("title", 20)
+                    .setNotNull("author")
+                    .thenApply((entity, non) -> entity.setTitle(entity.getTitle() + "과제"))
+                    .sample());
+            given(todo.getCreatedAt()).willReturn(LocalDateTime.now());
+            result.add(TodoShortInfo.of(todo));
+        }
+
+        given(repository.findAllByIsCompleteAndCondition(false, condition))
+                .willReturn(result);
+        // when
+        TodoInfoListResponse response = service.getTodoInfoList(condition);
+        // then
+        then(response.size()).isEqualTo(10);
     }
 }
