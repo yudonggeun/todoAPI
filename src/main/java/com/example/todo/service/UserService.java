@@ -8,11 +8,10 @@ import com.example.todo.dto.CustomerInfo;
 import com.example.todo.dto.request.LoginRequest;
 import com.example.todo.dto.request.SignUpRequest;
 import com.example.todo.repository.CustomerRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional
@@ -27,16 +26,16 @@ public class UserService {
             throw new IllegalArgumentException("동일한 유저 이름은 사용할 수 없습니다.");
         }
         customerRepository.save(Customer.builder()
-                .password(request.password())
-                .username(request.username())
-                .authority(List.of(new Authority(UserRole.USER)))
-                .build());
+            .password(request.password())
+            .username(request.username())
+            .authority(List.of(new Authority(UserRole.USER)))
+            .build());
     }
 
     public CustomerInfo getCustomerInfo(LoginRequest req) {
         Customer customer = customerRepository
-                .findByUsernameAndPassword(req.username(), req.password())
-                .orElseThrow(() -> new NotExistException("회원을 찾을 수 없습니다."));
+            .findByUsernameAndPassword(req.username(), req.password())
+            .orElseThrow(() -> new NotExistException("회원을 찾을 수 없습니다."));
         return CustomerInfo.of(customer);
     }
 }
